@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SugarJCleardep Test
+Bundle-SymbolicName: org.sugarj.cleardep.test
+Bundle-Version: 1.2.0.qualifier
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.core.runtime,
+ org.sugarj.common,
+ org.sugarj.cleardep,
+ org.junit
