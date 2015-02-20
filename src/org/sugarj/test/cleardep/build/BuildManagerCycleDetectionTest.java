@@ -13,6 +13,8 @@ import org.sugarj.cleardep.build.BuildContext;
 import org.sugarj.cleardep.build.BuildCycleException;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.Builder;
+import org.sugarj.cleardep.build.BuilderFactory;
+import org.sugarj.cleardep.build.EmptyBuildInput;
 import org.sugarj.cleardep.build.RequiredBuilderFailed;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
 import org.sugarj.cleardep.stamp.Stamper;
@@ -21,11 +23,25 @@ import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 
 public class BuildManagerCycleDetectionTest {
+	
+  public static final BuilderFactory<BuildContext, AbsolutePath, SimpleCompilationUnit, TestBuilder> testFactory = new BuilderFactory<BuildContext, AbsolutePath, SimpleCompilationUnit, BuildManagerCycleDetectionTest.TestBuilder>() {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3231801709410953205L;
+
+	@Override
+	public TestBuilder makeBuilder(BuildContext context) {
+		return new TestBuilder(context);
+	}
+	  
+};
   
   private static class TestBuilder extends Builder<BuildContext, AbsolutePath, SimpleCompilationUnit> {
 
-    public TestBuilder(BuildContext context) {
-      super(context);
+    private TestBuilder(BuildContext context) {
+      super(context, testFactory);
     }
 
     @Override
