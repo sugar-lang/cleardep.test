@@ -1,1 +1,5 @@
 /bin
+testdata/BuildSimpleTest/buildClean
+testdata/BuildSimpleTest/buildRootInconsistent
+testdata/Test..dep
+testdata/Test.dep
