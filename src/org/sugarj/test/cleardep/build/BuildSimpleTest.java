@@ -1,6 +1,12 @@
 package org.sugarj.test.cleardep.build;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.sugarj.test.cleardep.CompilationUnitTestUtils.set;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -25,8 +31,6 @@ import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
-
-import static org.sugarj.test.cleardep.CompilationUnitTestUtils.*;
 
 public class BuildSimpleTest {
 
