@@ -11,6 +11,7 @@ import org.sugarj.cleardep.CompilationUnit;
 import org.sugarj.cleardep.CompilationUnit.State;
 import org.sugarj.cleardep.SimpleCompilationUnit;
 import org.sugarj.cleardep.SimpleMode;
+import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
@@ -20,9 +21,9 @@ import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
 
-public class TestBuilder extends Builder<TestBuildContext, TestBuilderInput, SimpleCompilationUnit>{
+public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUnit>{
 
-	public static BuilderFactory<TestBuildContext, TestBuilderInput, SimpleCompilationUnit, TestBuilder> factory = new BuilderFactory<TestBuildContext, TestBuilder.TestBuilderInput, SimpleCompilationUnit, TestBuilder>() {
+	public static BuilderFactory< TestBuilderInput, SimpleCompilationUnit, TestBuilder> factory = new BuilderFactory< TestBuilder.TestBuilderInput, SimpleCompilationUnit, TestBuilder>() {
 
 		/**
 		 * 
@@ -30,8 +31,8 @@ public class TestBuilder extends Builder<TestBuildContext, TestBuilderInput, Sim
 		private static final long serialVersionUID = -6787456873371906431L;
 
 		@Override
-		public TestBuilder makeBuilder(TestBuildContext context) {
-			return new TestBuilder(context);
+		public TestBuilder makeBuilder(TestBuilderInput input, BuildManager manager) {
+			return new TestBuilder(input, manager);
 		}
 	};
 	
@@ -41,29 +42,35 @@ public class TestBuilder extends Builder<TestBuildContext, TestBuilderInput, Sim
 		 */
 		private static final long serialVersionUID = 6657909750424698658L;
 		private RelativePath inputPath;
+		private Path basePath;
 
-		public TestBuilderInput(RelativePath inputPath) {
+		public TestBuilderInput(Path basePath, RelativePath inputPath) {
 			super();
 			this.inputPath = inputPath;
+			this.basePath = basePath;
 		}
 		
 		public RelativePath getInputPath() {
 			return inputPath;
 		}
+		
+		public Path getBasePath() {
+			return basePath;
+		}
 	}
 	
 
-	private TestBuilder(TestBuildContext context) {
-		super(context, factory);
+	private TestBuilder(TestBuilderInput input, BuildManager manager) {
+		super(input, factory, manager);
 	}
 
 	@Override
-	protected String taskDescription(TestBuilderInput input) {
+	protected String taskDescription() {
 		return "Test Builder";
 	}
 
 	@Override
-	protected Path persistentPath(TestBuilderInput input) {
+	protected Path persistentPath() {
 		return FileCommands.addExtension(input.inputPath, "dep");
 	}
 
@@ -78,7 +85,7 @@ public class TestBuilder extends Builder<TestBuildContext, TestBuilderInput, Sim
 	}
 
 	@Override
-	protected void build(SimpleCompilationUnit result, TestBuilderInput input)
+	protected void build(SimpleCompilationUnit result)
 			throws IOException {
 		result.addSourceArtifact(input.inputPath);
 		List<String> allLines = Files.readAllLines(Paths.get(input.inputPath.getAbsolutePath()));
@@ -88,7 +95,8 @@ public class TestBuilder extends Builder<TestBuildContext, TestBuilderInput, Sim
 		for (String line : allLines) {
 			if (line.startsWith("Dep:")) {
 				String depFile = line.substring(4);
-				CompilationUnit dep = factory.makeBuilder(context).require(new TestBuilderInput(new RelativePath(context.getBasePath(), depFile)), new SimpleMode());
+				TestBuilderInput depInput = new TestBuilderInput(input.basePath, new RelativePath(input.getBasePath(), depFile));
+				CompilationUnit dep = require(factory, depInput, new SimpleMode());
 				result.addModuleDependency(dep);
 			} else {
 				contentLines.add(line);

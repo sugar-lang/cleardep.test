@@ -70,11 +70,9 @@ public class BuildSimpleTest {
 		allFiles = Arrays.asList(mainFile, dep1File, dep2File, dep2_1File);
 	}
 	
-	private TestBuilder buildMainFile(TestBuildManager manager) throws IOException{
-		TestBuildContext context = new TestBuildContext(manager, testBasePath);
-		TestBuilder builder = TestBuilder.factory.makeBuilder(context);
-		builder.require(new TestBuilderInput(mainFile), new SimpleMode());
-		return builder;
+	private void buildMainFile(TestBuildManager manager) throws IOException{
+		TestBuilder builder = TestBuilder.factory.makeBuilder(new TestBuilderInput(testBasePath,mainFile), manager);
+		manager.require(builder, new SimpleMode());
 	}
 	
 	private void addInputFileContent(RelativePath path, String newContent) throws IOException{
@@ -84,8 +82,8 @@ public class BuildSimpleTest {
 		Files.write(ioPath, lines);
 	}
 	
-	private SimpleCompilationUnit unitForFile(RelativePath path, TestBuilder builder) throws IOException{
-		Path depPath = builder.persistentPath(new TestBuilderInput(path));
+	private SimpleCompilationUnit unitForFile(RelativePath path) throws IOException{
+		Path depPath = TestBuilder.factory.makeBuilder(new TestBuilderInput(testBasePath,path), new BuildManager()).persistentPath();
 		SimpleCompilationUnit unit = CompilationUnit.read(SimpleCompilationUnit.class, new SimpleMode(), null, depPath);
 		return unit;
 	}
@@ -113,10 +111,10 @@ public class BuildSimpleTest {
 	@Test
 	public void buildClean() throws IOException {
 		TestBuildManager manager = new TestBuildManager();
-		TestBuilder builder = buildMainFile(manager);
+		buildMainFile(manager);
 		// Now require that all compilationUnits are consistent
 		for (RelativePath file : allFiles) {
-			SimpleCompilationUnit unit = unitForFile(file, builder);
+			SimpleCompilationUnit unit = unitForFile(file);
 			assertNotNull("No unit was persisted for path: " + file.getRelativePath(), unit);
 			assertTrue("Unit for " + file.getRelativePath() + " is not consistent", unit.isConsistent(null, new SimpleMode()));
 		}
@@ -134,12 +132,12 @@ public class BuildSimpleTest {
 	@Test
 	public void buildRootInconsistent() throws IOException {
 		TestBuildManager manager = new TestBuildManager();
-		TestBuilder builder =buildMainFile(manager);
+		buildMainFile(manager);
 		addInputFileContent(mainFile, "New content");
-		assertFalse("Main file is not inconsistent after change", unitForFile(mainFile, builder).isConsistent(null, new SimpleMode()));
+		assertFalse("Main file is not inconsistent after change", unitForFile(mainFile).isConsistent(null, new SimpleMode()));
 		// Rebuild
 		manager = new TestBuildManager();
-		builder = buildMainFile(manager);
+		buildMainFile(manager);
 		List<RelativePath> requiredFiles = inputToFileList(manager.getRequiredInputs());
 		assertEquals("Wrong filed required", set(mainFile, dep1File, dep2File), set(requiredFiles));
 		validateOrder(requiredFiles, mainFile, dep2File);
