@@ -66,7 +66,7 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 
 	@Override
 	protected String taskDescription() {
-		return "Test Builder";
+		return "Test Builder for " + input.getInputPath().getRelativePath();
 	}
 
 	@Override
