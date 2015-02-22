@@ -127,8 +127,8 @@ public class BuildSimpleTest {
 			RelativePath after) {
 		int beforeIndex = paths.indexOf(before);
 		int afterIndex = paths.indexOf(after);
-		assertNotEquals(-1, beforeIndex);
-		assertNotEquals(-1, afterIndex);
+		assertTrue(-1 != beforeIndex);
+		assertTrue(-1 != afterIndex);
 		assertTrue(
 				before.getRelativePath() + " not before "
 						+ after.getRelativePath(), beforeIndex < afterIndex);
