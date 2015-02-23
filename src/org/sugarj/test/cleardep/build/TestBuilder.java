@@ -88,7 +88,8 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 	protected void build(SimpleCompilationUnit result)
 			throws IOException {
 		result.addSourceArtifact(input.inputPath);
-		List<String> allLines = Files.readAllLines(Paths.get(input.inputPath.getAbsolutePath()));
+		java.nio.file.Path inputPath = Paths.get(input.inputPath.getAbsolutePath());
+		List<String> allLines = Files.readAllLines(inputPath);
 		
 		List<String> contentLines = new ArrayList<String>();
 		
@@ -105,7 +106,8 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 		
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
-		Files.write(Paths.get(generatedFile.getAbsolutePath()), contentLines);
+		java.nio.file.Path outputPath = Paths.get(generatedFile.getAbsolutePath());
+		Files.write(outputPath, contentLines);
 		result.addGeneratedFile(generatedFile);
 		result.setState(State.finished(true));
 	}

@@ -36,16 +36,4 @@
 		  </build>
 
 	<packaging>eclipse-plugin</packaging>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
-			<version>1.2.1</version>
-		</dependency>
-	</dependencies>
 </project>
