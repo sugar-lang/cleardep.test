@@ -11,8 +11,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,10 +28,6 @@ import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
-
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.IsNot.*;
-import static org.hamcrest.core.IsEqual.*;
 
 public class BuildSimpleTest {
 
@@ -90,18 +84,16 @@ public class BuildSimpleTest {
 
 	private void addInputFileContent(RelativePath path, String newContent)
 			throws IOException {
-		java.nio.file.Path ioPath = Paths.get(path.getAbsolutePath());
-		List<String> lines = Files.readAllLines(ioPath);
+		List<String> lines = FileCommands.readFileLines(path);
 		lines.add(newContent);
-		Files.write(ioPath, lines);
+		FileCommands.writeLinesFile(path, lines);
 	}
 	
 	private void addInputFileDep(RelativePath path, RelativePath dep)
 			throws IOException {
-		java.nio.file.Path ioPath = Paths.get(path.getAbsolutePath());
-		List<String> lines = Files.readAllLines(ioPath);
+		List<String> lines = FileCommands.readFileLines(path);
 		lines.add("Dep:"+dep.getRelativePath());
-		Files.write(ioPath, lines);
+		FileCommands.writeLinesFile(path, lines);
 	}
 
 	private SimpleCompilationUnit unitForFile(RelativePath path)
@@ -131,8 +123,8 @@ public class BuildSimpleTest {
 		int beforeIndex = paths.indexOf(before);
 		int afterIndex = paths.indexOf(after);
 		
-		assertThat(beforeIndex, not(equalTo(-1)));
-		assertThat(afterIndex, not(equalTo(-1)));
+		assertTrue(beforeIndex != -1);
+		assertTrue(afterIndex != -1);
 		assertTrue(
 				before.getRelativePath() + " not before "
 						+ after.getRelativePath(), beforeIndex < afterIndex);

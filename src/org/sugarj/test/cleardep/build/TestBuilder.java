@@ -2,8 +2,6 @@ package org.sugarj.test.cleardep.build;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,8 +86,7 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 	protected void build(SimpleCompilationUnit result)
 			throws IOException {
 		result.addSourceArtifact(input.inputPath);
-		java.nio.file.Path inputPath = Paths.get(input.inputPath.getAbsolutePath());
-		List<String> allLines = Files.readAllLines(inputPath);
+		List<String> allLines = FileCommands.readFileLines(input.inputPath);
 		
 		List<String> contentLines = new ArrayList<String>();
 		
@@ -106,8 +103,7 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 		
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
-		java.nio.file.Path outputPath = Paths.get(generatedFile.getAbsolutePath());
-		Files.write(outputPath, contentLines);
+		FileCommands.writeLinesFile(generatedFile, contentLines);
 		result.addGeneratedFile(generatedFile);
 		result.setState(State.finished(true));
 	}
