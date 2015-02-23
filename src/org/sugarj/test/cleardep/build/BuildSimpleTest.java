@@ -27,7 +27,7 @@ import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
 public class BuildSimpleTest {
 
@@ -75,9 +75,9 @@ public class BuildSimpleTest {
 		System.out.println("====== Execute test " + name.getMethodName() + " ======");
 	}
 
-	private void buildMainFile(TestBuildManager manager) throws IOException {
+	private void buildMainFile(TrackingBuildManager manager) throws IOException {
 		System.out.println("====== Build Project .... ======");
-		TestBuilder builder = TestBuilder.factory.makeBuilder(
+		SimpleBuilder builder = SimpleBuilder.factory.makeBuilder(
 				new TestBuilderInput(testBasePath, mainFile), manager);
 		manager.require(builder, new SimpleMode());
 	}
@@ -98,7 +98,7 @@ public class BuildSimpleTest {
 
 	private SimpleCompilationUnit unitForFile(RelativePath path)
 			throws IOException {
-		Path depPath = TestBuilder.factory.makeBuilder(
+		Path depPath = SimpleBuilder.factory.makeBuilder(
 				new TestBuilderInput(testBasePath, path), new BuildManager())
 				.persistentPath();
 		SimpleCompilationUnit unit = CompilationUnit.read(
@@ -131,8 +131,8 @@ public class BuildSimpleTest {
 	}
 
 	@Test
-	public void buildClean() throws IOException {
-		TestBuildManager manager = new TestBuildManager();
+	public void testBuildClean() throws IOException {
+		TrackingBuildManager manager = new TrackingBuildManager();
 		buildMainFile(manager);
 		// Now require that all compilationUnits are consistent
 		for (RelativePath file : allFiles) {
@@ -158,15 +158,15 @@ public class BuildSimpleTest {
 	}
 
 	@Test
-	public void buildRootInconsistent() throws IOException {
-		TestBuildManager manager = new TestBuildManager();
+	public void testBuildRootInconsistent() throws IOException {
+		TrackingBuildManager manager = new TrackingBuildManager();
 		buildMainFile(manager);
 
 		addInputFileContent(mainFile, "New content");
 		assertFalse("Main file is not inconsistent after change",
 				unitForFile(mainFile).isConsistent(null, new SimpleMode()));
 		// Rebuild
-		manager = new TestBuildManager();
+		manager = new TrackingBuildManager();
 		buildMainFile(manager);
 		List<RelativePath> requiredFiles = inputToFileList(manager
 				.getRequiredInputs());
@@ -181,15 +181,15 @@ public class BuildSimpleTest {
 	}
 
 	@Test
-	public void buildLeafInconsistent() throws IOException {
-		TestBuildManager manager = new TestBuildManager();
+	public void testBuildLeafInconsistent() throws IOException {
+		TrackingBuildManager manager = new TrackingBuildManager();
 		buildMainFile(manager);
 
 		addInputFileContent(dep2_1File, "New content");
 		assertFalse("dep2_1File file is not inconsistent after change",
 				unitForFile(dep2_1File).isConsistent(null, new SimpleMode()));
 		// Rebuild
-		manager = new TestBuildManager();
+		manager = new TrackingBuildManager();
 		buildMainFile(manager);
 		List<RelativePath> requiredFiles = inputToFileList(manager
 				.getRequiredInputs());
@@ -204,8 +204,8 @@ public class BuildSimpleTest {
 	}
 
 	@Test
-	public void buildLeafInconsistentNewDep() throws IOException {
-		TestBuildManager manager = new TestBuildManager();
+	public void testBuildLeafInconsistentNewDep() throws IOException {
+		TrackingBuildManager manager = new TrackingBuildManager();
 		buildMainFile(manager);
 		
 		
@@ -219,7 +219,7 @@ public class BuildSimpleTest {
 				unitForFile(dep1File).isConsistent(null, new SimpleMode()));
 		
 		// Rebuild
-		manager = new TestBuildManager();
+		manager = new TrackingBuildManager();
 		buildMainFile(manager);
 		List<RelativePath> requiredFiles = inputToFileList(manager
 				.getRequiredInputs());

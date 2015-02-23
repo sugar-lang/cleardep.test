@@ -10,7 +10,7 @@ import org.sugarj.cleardep.Mode;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.Builder;
 
-public class TestBuildManager extends BuildManager {
+public class TrackingBuildManager extends BuildManager {
 	
 	private List<Serializable> requiredInputs = new ArrayList<Serializable>();
 	private List<Serializable> executedInputs = new ArrayList<Serializable>();

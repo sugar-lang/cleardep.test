@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.sugarj.cleardep.CompilationUnit;
 import org.sugarj.cleardep.CompilationUnit.State;
@@ -17,11 +18,11 @@ import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
-public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUnit>{
+public class SimpleBuilder extends Builder< TestBuilderInput, SimpleCompilationUnit>{
 
-	public static BuilderFactory< TestBuilderInput, SimpleCompilationUnit, TestBuilder> factory = new BuilderFactory< TestBuilder.TestBuilderInput, SimpleCompilationUnit, TestBuilder>() {
+	public static BuilderFactory< TestBuilderInput, SimpleCompilationUnit, SimpleBuilder> factory = new BuilderFactory< SimpleBuilder.TestBuilderInput, SimpleCompilationUnit, SimpleBuilder>() {
 
 		/**
 		 * 
@@ -29,8 +30,8 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 		private static final long serialVersionUID = -6787456873371906431L;
 
 		@Override
-		public TestBuilder makeBuilder(TestBuilderInput input, BuildManager manager) {
-			return new TestBuilder(input, manager);
+		public SimpleBuilder makeBuilder(TestBuilderInput input, BuildManager manager) {
+			return new SimpleBuilder(input, manager);
 		}
 	};
 	
@@ -44,6 +45,9 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 
 		public TestBuilderInput(Path basePath, RelativePath inputPath) {
 			super();
+			Objects.requireNonNull(basePath);
+			Objects.requireNonNull(inputPath);
+			Objects.requireNonNull(inputPath.getBasePath());
 			this.inputPath = inputPath;
 			this.basePath = basePath;
 		}
@@ -58,7 +62,7 @@ public class TestBuilder extends Builder< TestBuilderInput, SimpleCompilationUni
 	}
 	
 
-	private TestBuilder(TestBuilderInput input, BuildManager manager) {
+	private SimpleBuilder(TestBuilderInput input, BuildManager manager) {
 		super(input, factory, manager);
 	}
 
