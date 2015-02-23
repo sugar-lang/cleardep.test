@@ -31,6 +31,10 @@ import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.TestBuilder.TestBuilderInput;
 
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.core.IsNot.*;
+import static org.hamcrest.core.IsEqual.*;
+
 public class BuildSimpleTest {
 
 	private static AbsolutePath basePath = new AbsolutePath(new File(
@@ -126,8 +130,9 @@ public class BuildSimpleTest {
 			RelativePath after) {
 		int beforeIndex = paths.indexOf(before);
 		int afterIndex = paths.indexOf(after);
-		assertTrue(-1 != beforeIndex);
-		assertTrue(-1 != afterIndex);
+		
+		assertThat(beforeIndex, not(equalTo(-1)));
+		assertThat(afterIndex, not(equalTo(-1)));
 		assertTrue(
 				before.getRelativePath() + " not before "
 						+ after.getRelativePath(), beforeIndex < afterIndex);
