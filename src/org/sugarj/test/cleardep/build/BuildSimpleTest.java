@@ -20,12 +20,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.sugarj.cleardep.CompilationUnit;
-import org.sugarj.cleardep.SimpleCompilationUnit;
-import org.sugarj.cleardep.SimpleMode;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.AbsolutePath;
-import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
@@ -77,9 +74,8 @@ public class BuildSimpleTest {
 
 	private void buildMainFile(TrackingBuildManager manager) throws IOException {
 		System.out.println("====== Build Project .... ======");
-		SimpleBuilder builder = SimpleBuilder.factory.makeBuilder(
-				new TestBuilderInput(testBasePath, mainFile), manager);
-		manager.require(builder, new SimpleMode());
+		TestRequirement req = new TestRequirement(SimpleBuilder.factory, new TestBuilderInput(testBasePath, mainFile));
+		manager.require(req);
 	}
 
 	private void addInputFileContent(RelativePath path, String newContent)
@@ -96,13 +92,12 @@ public class BuildSimpleTest {
 		FileCommands.writeLinesFile(path, lines);
 	}
 
-	private SimpleCompilationUnit unitForFile(RelativePath path)
+	private CompilationUnit unitForFile(RelativePath path)
 			throws IOException {
-		Path depPath = SimpleBuilder.factory.makeBuilder(
-				new TestBuilderInput(testBasePath, path), new BuildManager())
-				.persistentPath();
-		SimpleCompilationUnit unit = CompilationUnit.read(
-				SimpleCompilationUnit.class, new SimpleMode(), null, depPath);
+		TestRequirement req = new TestRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
+		
+		CompilationUnit unit = CompilationUnit.read(
+				CompilationUnit.class, req.factory.makeBuilder(req.input, new BuildManager()).persistentPath(), req);
 		return unit;
 	}
 
@@ -136,13 +131,13 @@ public class BuildSimpleTest {
 		buildMainFile(manager);
 		// Now require that all compilationUnits are consistent
 		for (RelativePath file : allFiles) {
-			SimpleCompilationUnit unit = unitForFile(file);
+			CompilationUnit unit = unitForFile(file);
 			assertNotNull(
 					"No unit was persisted for path: " + file.getRelativePath(),
 					unit);
 			assertTrue("Unit for " + file.getRelativePath()
 					+ " is not consistent",
-					unit.isConsistent(null, new SimpleMode()));
+					unit.isConsistent(null));
 		}
 		List<RelativePath> requiredFiles = inputToFileList(manager
 				.getRequiredInputs());
@@ -164,7 +159,7 @@ public class BuildSimpleTest {
 
 		addInputFileContent(mainFile, "New content");
 		assertFalse("Main file is not inconsistent after change",
-				unitForFile(mainFile).isConsistent(null, new SimpleMode()));
+				unitForFile(mainFile).isConsistent(null));
 		// Rebuild
 		manager = new TrackingBuildManager();
 		buildMainFile(manager);
@@ -187,7 +182,7 @@ public class BuildSimpleTest {
 
 		addInputFileContent(dep2_1File, "New content");
 		assertFalse("dep2_1File file is not inconsistent after change",
-				unitForFile(dep2_1File).isConsistent(null, new SimpleMode()));
+				unitForFile(dep2_1File).isConsistent(null));
 		// Rebuild
 		manager = new TrackingBuildManager();
 		buildMainFile(manager);
@@ -214,9 +209,9 @@ public class BuildSimpleTest {
 		
 		addInputFileDep(dep2_1File, dep1File);
 		assertFalse("dep2_1File file is not inconsistent after change",
-				unitForFile(dep2_1File).isConsistent(null, new SimpleMode()));
+				unitForFile(dep2_1File).isConsistent(null));
 		assertFalse("dep1File file is not inconsistent after change",
-				unitForFile(dep1File).isConsistent(null, new SimpleMode()));
+				unitForFile(dep1File).isConsistent(null));
 		
 		// Rebuild
 		manager = new TrackingBuildManager();

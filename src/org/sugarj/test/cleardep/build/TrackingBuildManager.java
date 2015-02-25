@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sugarj.cleardep.CompilationUnit;
-import org.sugarj.cleardep.Mode;
 import org.sugarj.cleardep.build.BuildManager;
+import org.sugarj.cleardep.build.BuildRequirement;
 import org.sugarj.cleardep.build.Builder;
+import org.sugarj.cleardep.build.BuilderFactory;
 
 public class TrackingBuildManager extends BuildManager {
 	
@@ -16,17 +17,19 @@ public class TrackingBuildManager extends BuildManager {
 	private List<Serializable> executedInputs = new ArrayList<Serializable>();
 	
 	@Override
-	public <T extends Serializable, E extends CompilationUnit> E require(
-			Builder< T, E> builder,  Mode<E> mode) throws IOException {
-		requiredInputs.add(builder.getInput());
-		return super.require(builder, mode);
+	public <T extends Serializable, E extends CompilationUnit, B extends Builder<T, E>, F extends BuilderFactory<T, E, B>> E require(
+			BuildRequirement<T, E, B, F> buildReq) throws IOException {
+		requiredInputs.add(buildReq.input);
+		return super.require(buildReq);
 	}
 	
+	
 	@Override
-	protected < T extends Serializable, E extends CompilationUnit> E executeBuilder(
-			Builder< T, E> builder,Mode<E> mode) throws IOException {
-		executedInputs.add(builder.getInput());
-		return super.executeBuilder(builder, mode);
+	protected <T extends Serializable, E extends CompilationUnit, B extends Builder<T, E>, F extends BuilderFactory<T, E, B>> E executeBuilder(
+			Builder<T, E> builder, E depResult,
+			BuildRequirement<T, E, ?, ?> buildReq) throws IOException {
+		executedInputs.add(buildReq.input);
+		return super.executeBuilder(builder, depResult, buildReq);
 	}
 	
 	public List<Serializable> getRequiredInputs() {

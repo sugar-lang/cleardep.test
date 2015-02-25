@@ -1,16 +1,17 @@
 package org.sugarj.test.cleardep;
 
-import static org.sugarj.test.cleardep.CompilationUnitTestUtils.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.sugarj.test.cleardep.CompilationUnitTestUtils.makeEdgeFrom;
+import static org.sugarj.test.cleardep.CompilationUnitTestUtils.makeNode;
+import static org.sugarj.test.cleardep.CompilationUnitTestUtils.set;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.sugarj.cleardep.CompilationUnit;
 import org.sugarj.cleardep.CompilationUnit.ModuleVisitor;
-import org.sugarj.cleardep.Mode;
 import org.sugarj.test.cleardep.CompilationUnitTestUtils.NodeUnit;
 
 public class CompilationUnitVisitTest {
@@ -18,7 +19,7 @@ public class CompilationUnitVisitTest {
 	ModuleVisitor<List<NodeUnit>> collectVisitedNodesVisitor = new ModuleVisitor<List<NodeUnit>> () {
 
 		@Override
-		public List<NodeUnit> visit(CompilationUnit mod, Mode<?> mode) {
+		public List<NodeUnit> visit(CompilationUnit mod) {
 			if (!(mod instanceof NodeUnit)) {
 				fail("Got unit of illegal type");
 			}
