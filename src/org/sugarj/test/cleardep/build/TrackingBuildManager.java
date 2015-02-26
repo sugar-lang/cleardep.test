@@ -26,10 +26,9 @@ public class TrackingBuildManager extends BuildManager {
 	
 	@Override
 	protected <T extends Serializable, E extends CompilationUnit, B extends Builder<T, E>, F extends BuilderFactory<T, E, B>> E executeBuilder(
-			Builder<T, E> builder, E depResult,
-			BuildRequirement<T, E, ?, ?> buildReq) throws IOException {
-		executedInputs.add(buildReq.input);
-		return super.executeBuilder(builder, depResult, buildReq);
+			Builder<T, E> builder, E depResult) throws IOException {
+		executedInputs.add(depResult.getGeneratedBy().input);
+		return super.executeBuilder(builder, depResult);
 	}
 	
 	public List<Serializable> getRequiredInputs() {

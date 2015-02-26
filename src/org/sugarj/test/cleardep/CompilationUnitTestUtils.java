@@ -111,9 +111,11 @@ public class CompilationUnitTestUtils {
 				public AndEdgeMaker and(NodeUnit dst) {
 					for (NodeUnit src : srcs) {
 						src.addModuleDependency(
-								dst,
-								new BuildRequirement<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>, BuilderFactory<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>>>(
-										factory, new NodeInput(src.name)));
+								dst
+//								,
+//								new BuildRequirement<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>, BuilderFactory<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>>>(
+//										factory, new NodeInput(src.name))
+										);
 					}
 					return this;
 				}
