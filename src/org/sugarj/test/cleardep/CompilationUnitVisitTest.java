@@ -10,16 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.sugarj.cleardep.CompilationUnit;
-import org.sugarj.cleardep.CompilationUnit.ModuleVisitor;
+import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.test.cleardep.CompilationUnitTestUtils.NodeUnit;
 
 public class CompilationUnitVisitTest {
 	
-	ModuleVisitor<List<NodeUnit>> collectVisitedNodesVisitor = new ModuleVisitor<List<NodeUnit>> () {
+	BuildUnit.ModuleVisitor<List<NodeUnit>> collectVisitedNodesVisitor = new BuildUnit.ModuleVisitor<List<NodeUnit>> () {
 
 		@Override
-		public List<NodeUnit> visit(CompilationUnit mod) {
+		public List<NodeUnit> visit(BuildUnit mod) {
 			if (!(mod instanceof NodeUnit)) {
 				fail("Got unit of illegal type");
 			}

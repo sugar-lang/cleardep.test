@@ -7,9 +7,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sugarj.cleardep.CompilationUnit;
+import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildManager;
-import org.sugarj.cleardep.build.BuildRequirement;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 
@@ -42,7 +41,7 @@ public class CompilationUnitTestUtils {
 
 	};
 
-	public static class NodeUnit extends CompilationUnit {
+	public static class NodeUnit extends BuildUnit {
 
 		/**
 		 * 
@@ -53,11 +52,6 @@ public class CompilationUnitTestUtils {
 		private NodeUnit(String name) {
 			this.name = name;
 			this.init();
-		}
-
-		@Override
-		protected boolean isConsistentExtend() {
-			return true;
 		}
 
 		@Override
@@ -110,12 +104,7 @@ public class CompilationUnitTestUtils {
 				@Override
 				public AndEdgeMaker and(NodeUnit dst) {
 					for (NodeUnit src : srcs) {
-						src.addModuleDependency(
-								dst
-//								,
-//								new BuildRequirement<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>, BuilderFactory<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>>>(
-//										factory, new NodeInput(src.name))
-										);
+						src.requires(dst);
 					}
 					return this;
 				}
