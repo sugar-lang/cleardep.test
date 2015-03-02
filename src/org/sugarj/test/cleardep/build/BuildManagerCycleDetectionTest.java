@@ -117,12 +117,12 @@ public class BuildManagerCycleDetectionTest {
 			assertTrue("Cause is not a cycle",
 					e.getCause() instanceof BuildCycleException);
 			BuildCycleException cycle = (BuildCycleException) e.getCause();
-			List<Pair<BuildUnit, BuildRequest<?, ?, ?, ?>>> cyclicUnits = cycle
+			List<Pair<? extends BuildUnit, BuildRequest<?, ?, ?, ?>>> cyclicUnits = cycle
 					.getCycleComponents();
 			assertEquals("Wrong number of units in cycle", 10,
 					cyclicUnits.size());
 			for (int i = 0; i < 10; i++) {
-				Pair<BuildUnit, BuildRequest<?, ?, ?, ?>> unitPair = cyclicUnits
+				Pair<? extends BuildUnit, BuildRequest<?, ?, ?, ?>> unitPair = cyclicUnits
 						.get(i);
 				assertEquals("Wrong persistence path for unit",
 						getDepPathWithNumber(i), unitPair.a.getPersistentPath());
