@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.sugarj.cleardep.CompilationUnit;
-import org.sugarj.cleardep.CompilationUnit.State;
+import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildManager;
-import org.sugarj.cleardep.build.BuildRequirement;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
@@ -19,9 +17,9 @@ import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
-public class SimpleBuilder extends Builder<TestBuilderInput, CompilationUnit> {
+public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
 
-	public static BuilderFactory<TestBuilderInput, CompilationUnit, SimpleBuilder> factory = new BuilderFactory<SimpleBuilder.TestBuilderInput, CompilationUnit, SimpleBuilder>() {
+	public static BuilderFactory<TestBuilderInput, BuildUnit, SimpleBuilder> factory = new BuilderFactory<SimpleBuilder.TestBuilderInput, BuildUnit, SimpleBuilder>() {
 
 		/**
 		 * 
@@ -76,8 +74,8 @@ public class SimpleBuilder extends Builder<TestBuilderInput, CompilationUnit> {
 	}
 
 	@Override
-	protected Class<CompilationUnit> resultClass() {
-		return CompilationUnit.class;
+	protected Class<BuildUnit> resultClass() {
+		return BuildUnit.class;
 	}
 
 	@Override
@@ -86,8 +84,8 @@ public class SimpleBuilder extends Builder<TestBuilderInput, CompilationUnit> {
 	}
 
 	@Override
-	protected void build(CompilationUnit result) throws IOException {
-		result.addSourceArtifact(input.inputPath);
+	protected void build(BuildUnit result) throws IOException {
+		result.requires(input.inputPath);
 		List<String> allLines = FileCommands.readFileLines(input.inputPath);
 
 		List<String> contentLines = new ArrayList<String>();
@@ -108,8 +106,8 @@ public class SimpleBuilder extends Builder<TestBuilderInput, CompilationUnit> {
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
 		FileCommands.writeLinesFile(generatedFile, contentLines);
-		result.addGeneratedFile(generatedFile);
-		result.setState(State.finished(true));
+		result.requires(generatedFile);
+		result.setState(BuildUnit.State.finished(true));
 	}
 
 }
