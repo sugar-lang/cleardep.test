@@ -1,6 +1,6 @@
 /bin
 testdata/Test.dep
-testdata/BuildSimpleTest/testBuildClean
-testdata/BuildSimpleTest/testBuildLeafInconsistent
-testdata/BuildSimpleTest/testBuildLeafInconsistentNewDep
-testdata/BuildSimpleTest/testBuildRootInconsistent
+testdata/RebuildInconsistentTest/testBuildLeafInconsistentNewDep
+testdata/RebuildInconsistentTest/testBuildRootInconsistent
+testdata/RebuildInconsistentTest/testBuildLeafInconsistent
+testdata/CycleAtOnceBuilderTest/buildCycle

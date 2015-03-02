@@ -57,6 +57,11 @@ public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
 		public Path getBasePath() {
 			return basePath;
 		}
+		
+		@Override
+		public String toString() {
+			return this.getInputPath().getRelativePath();
+		}
 	}
 
 	private SimpleBuilder(TestBuilderInput input, BuildManager manager) {

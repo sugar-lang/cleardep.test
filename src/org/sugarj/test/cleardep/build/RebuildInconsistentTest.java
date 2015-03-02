@@ -1,43 +1,27 @@
 package org.sugarj.test.cleardep.build;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.sugarj.test.cleardep.CompilationUnitTestUtils.set;
+import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.addInputFileContent;
+import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.addInputFileDep;
+import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.unitForFile;
+import static org.sugarj.test.cleardep.build.Validators.executedFilesOf;
+import static org.sugarj.test.cleardep.build.Validators.in;
+import static org.sugarj.test.cleardep.build.Validators.requiredFilesOf;
+import static org.sugarj.test.cleardep.build.Validators.validateThat;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.sugarj.cleardep.BuildUnit;
-import org.sugarj.cleardep.build.BuildManager;
-import org.sugarj.common.FileCommands;
-import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
-import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.*;
-
-import static org.sugarj.test.cleardep.build.Validators.*;
-public class RebuildInconsistentTest {
-
-	private static AbsolutePath basePath = new AbsolutePath(new File(
-			"testdata/BuildSimpleTest/").getAbsolutePath());
-
-	@Rule
-	public TestName name = new TestName();
-
-	private AbsolutePath testBasePath;
+public class RebuildInconsistentTest extends SimpleBuildTest{
 
 	private RelativePath mainFile;
 	private RelativePath dep1File;
@@ -48,39 +32,20 @@ public class RebuildInconsistentTest {
 
 	@Before
 	public void makeConsistentState() throws IOException{
-		clean();
+		mainFile = getRelativeFile("main.txt");
+		dep1File = getRelativeFile("dep1.txt");
+		dep2File = getRelativeFile("dep2.txt");
+		dep2_1File = getRelativeFile("dep2-1.txt");
+		allFiles = Arrays.asList(mainFile, dep1File, dep2File, dep2_1File);
 		buildClean();
 	}
 	
-	
-	private void clean() throws IOException {
-		testBasePath = new AbsolutePath(basePath.getAbsolutePath() + "/"
-				+ name.getMethodName());
 
-		FileCommands.delete(testBasePath);
-		FileCommands.createDir(testBasePath);
-
-		for (RelativePath path : FileCommands.listFiles(basePath,
-				new FileFilter() {
-
-					@Override
-					public boolean accept(File pathname) {
-						return pathname.isFile();
-					}
-				})) {
-			FileCommands.copyFile(path,
-					new RelativePath(testBasePath, path.getRelativePath()));
-		}
-
-		mainFile = new RelativePath(testBasePath, "main.txt");
-		dep1File = new RelativePath(testBasePath, "dep1.txt");
-		dep2File = new RelativePath(testBasePath, "dep2.txt");
-		dep2_1File = new RelativePath(testBasePath, "dep2-1.txt");
-		allFiles = Arrays.asList(mainFile, dep1File, dep2File, dep2_1File);
-		
-		System.out.println("====== Execute test " + name.getMethodName() + " ======");
-		
+	@Override
+	protected TestRequirement requirementForInput(TestBuilderInput input) {
+		return new TestRequirement(SimpleBuilder.factory, input);
 	}
+
 	
 	private void buildClean() throws IOException {
 		TrackingBuildManager manager = buildMainFile();
@@ -99,18 +64,6 @@ public class RebuildInconsistentTest {
 
 		validateThat(in(executedFilesOf(manager)).is(mainFile).before(dep1File, dep2File));
 		validateThat(in(executedFilesOf(manager)).is(dep2File).before(dep2_1File));
-	}
-	
-	private TrackingBuildManager buildMainFile() throws IOException {
-		TrackingBuildManager manager = new TrackingBuildManager();
-		buildMainFile(manager);
-		return manager;
-	}
-
-	private void buildMainFile(TrackingBuildManager manager) throws IOException {
-		System.out.println("====== Build Project .... ======");
-		TestRequirement req = new TestRequirement(SimpleBuilder.factory, new TestBuilderInput(testBasePath, mainFile));
-		manager.require(req);
 	}
 
 	@Test
