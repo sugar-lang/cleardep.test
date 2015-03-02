@@ -21,6 +21,7 @@ public class CycleAtOnceBuilderTest extends SimpleBuildTest{
 	@Test
 	public void buildCycle() throws IOException {
 		TrackingBuildManager manager = buildMainFile();
+		// TODO do some assertions here
 	}
 
 	

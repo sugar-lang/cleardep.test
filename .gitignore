@@ -4,3 +4,4 @@ testdata/RebuildInconsistentTest/testBuildLeafInconsistentNewDep
 testdata/RebuildInconsistentTest/testBuildRootInconsistent
 testdata/RebuildInconsistentTest/testBuildLeafInconsistent
 testdata/CycleAtOnceBuilderTest/buildCycle
+testdata/CycleDetectionTest
