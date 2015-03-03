@@ -11,6 +11,7 @@ import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
+import org.sugarj.cleardep.output.BuildOutput;
 
 public class CompilationUnitTestUtils {
 
@@ -25,8 +26,28 @@ public class CompilationUnitTestUtils {
 			this.name = name;
 		}
 	}
+	
+	public static class NodeOutput implements BuildOutput {
 
-	private static BuilderFactory<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>> factory = new BuilderFactory<NodeInput, NodeUnit, Builder<NodeInput, NodeUnit>>() {
+		private final String name;
+		
+		
+		
+		public NodeOutput(String name) {
+			super();
+			this.name = name;
+		}
+
+
+
+		@Override
+		public boolean isConsistent() {
+			return true;
+		}
+		
+	}
+
+	private static BuilderFactory<NodeInput, EmptyBuildOutput, Builder<NodeInput, EmptyBuildOutput>> factory = new BuilderFactory<NodeInput, EmptyBuildOutput, Builder<NodeInput, EmptyBuildOutput>>() {
 
 		/**
 		 * 
@@ -34,77 +55,53 @@ public class CompilationUnitTestUtils {
 		private static final long serialVersionUID = -695869678306450263L;
 
 		@Override
-		public Builder<NodeInput, NodeUnit> makeBuilder(NodeInput input,
-				BuildManager manager) {
+		public Builder<NodeInput, EmptyBuildOutput> makeBuilder(NodeInput input) {
 			throw new UnsupportedOperationException();
 		}
 
 	};
 
-	public static class NodeUnit extends BuildUnit {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5474025936620029380L;
-		private String name;
-
-		private NodeUnit(String name) {
-			this.name = name;
-			this.init();
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String toString() {
-			return "Node(" + name + ")";
-		}
-
-	}
-
-	public static NodeUnit makeNode(String name) {
-		return new NodeUnit(name);
+	public static BuildUnit<NodeOutput> makeNode(String name) {
+		BuildUnit<NodeOutput> unit = new BuildUnit<NodeOutput>();
+		unit.setBuildResult(new NodeOutput(name));
+		return unit;
 	}
 
 	public static interface EdgeMaker {
-		public EdgeMaker and(NodeUnit dst);
+		public EdgeMaker and(BuildUnit<NodeOutput> dst);
 
-		public AndEdgeMaker to(NodeUnit dst);
+		public AndEdgeMaker to(BuildUnit<NodeOutput> dst);
 	}
 
 	public static interface AndEdgeMaker {
-		public AndEdgeMaker and(NodeUnit dst);
+		public AndEdgeMaker and(BuildUnit<NodeOutput> dst);
 	}
 
 	private static class DefaultEdgeMaker implements EdgeMaker {
-		private Set<NodeUnit> srcs = new HashSet<>();
+		private Set<BuildUnit<NodeOutput>> srcs = new HashSet<>();
 
-		public DefaultEdgeMaker(NodeUnit src) {
+		public DefaultEdgeMaker(BuildUnit<NodeOutput> src) {
 			srcs = Collections.singleton(src);
 		}
 
-		public DefaultEdgeMaker(Set<NodeUnit> otherSrcs, NodeUnit src) {
+		public DefaultEdgeMaker(Set<BuildUnit<NodeOutput>> otherSrcs, BuildUnit<NodeOutput> src) {
 			srcs = new HashSet<>(otherSrcs);
 			srcs.add(src);
 		}
 
 		@Override
-		public EdgeMaker and(NodeUnit src) {
+		public EdgeMaker and(BuildUnit<NodeOutput> src) {
 			return new DefaultEdgeMaker(srcs, src);
 		}
 
 		@Override
-		public AndEdgeMaker to(NodeUnit dst) {
+		public AndEdgeMaker to(BuildUnit<NodeOutput> dst) {
 			AndEdgeMaker maker = new AndEdgeMaker() {
 
 				@Override
-				public AndEdgeMaker and(NodeUnit dst) {
-					for (NodeUnit src : srcs) {
-						src.requires(dst);
+				public AndEdgeMaker and(BuildUnit<NodeOutput> dst) {
+					for (BuildUnit<NodeOutput> src : srcs) {
+						src.dependsOn(dst);
 					}
 					return this;
 				}
@@ -114,8 +111,12 @@ public class CompilationUnitTestUtils {
 
 	}
 
-	public static EdgeMaker makeEdgeFrom(final NodeUnit src) {
+	public static EdgeMaker makeEdgeFrom(final BuildUnit<NodeOutput> src) {
 		return new DefaultEdgeMaker(src);
+	}
+	
+	public static String nodeName(BuildUnit<NodeOutput> node) {
+		return node.getBuildResult().name;
 	}
 
 	public static <T> Set<T> set(T... elems) {

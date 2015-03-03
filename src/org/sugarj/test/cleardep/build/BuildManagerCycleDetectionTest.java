@@ -24,6 +24,7 @@ import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.common.util.Pair;
+import org.sugarj.test.cleardep.EmptyBuildOutput;
 
 public class BuildManagerCycleDetectionTest {
 	
@@ -35,21 +36,21 @@ public class BuildManagerCycleDetectionTest {
 		FileCommands.createDir(baseDir);
 	}
 
-	public static final BuilderFactory<Path, BuildUnit, TestBuilder> testFactory = new BuilderFactory<Path, BuildUnit, BuildManagerCycleDetectionTest.TestBuilder>() {
+	public static final BuilderFactory<Path, EmptyBuildOutput, TestBuilder> testFactory = new BuilderFactory<Path, EmptyBuildOutput, TestBuilder>() {
 
 		private static final long serialVersionUID = 3231801709410953205L;
 
 		@Override
-		public TestBuilder makeBuilder(Path input, BuildManager manager) {
-			return new TestBuilder(input, manager);
+		public TestBuilder makeBuilder(Path input) {
+			return new TestBuilder(input);
 		}
 
 	};
 
-	private static class TestBuilder extends Builder<Path, BuildUnit> {
+	private static class TestBuilder extends Builder<Path, EmptyBuildOutput> {
 
-		private TestBuilder(Path input, BuildManager manager) {
-			super(input, testFactory, manager);
+		private TestBuilder(Path input) {
+			super(input);
 		}
 
 		@Override
@@ -63,17 +64,12 @@ public class BuildManagerCycleDetectionTest {
 		}
 
 		@Override
-		protected Class<BuildUnit> resultClass() {
-			return BuildUnit.class;
-		}
-
-		@Override
 		protected Stamper defaultStamper() {
 			return ContentHashStamper.instance;
 		}
 
 		@Override
-		protected void build(BuildUnit result) throws IOException {
+		protected EmptyBuildOutput build() throws IOException {
 			AbsolutePath req;
 			int number = 0;
 			String inputWithoutExt = FileCommands.dropExtension(input
@@ -94,6 +90,7 @@ public class BuildManagerCycleDetectionTest {
 					+ number + ".txt");
 
 			require(testFactory, req);
+			return EmptyBuildOutput.instance;
 		}
 
 	}
@@ -111,18 +108,18 @@ public class BuildManagerCycleDetectionTest {
 
 		try {
 			BuildManager manager = new BuildManager();
-			manager.require(new BuildRequest<Path, BuildUnit, TestBuilder, BuilderFactory<Path, BuildUnit, TestBuilder>>(
+			manager.require(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
 					testFactory, getPathWithNumber(0)));
 		} catch (RequiredBuilderFailed e) {
 			assertTrue("Cause is not a cycle",
 					e.getCause() instanceof BuildCycleException);
 			BuildCycleException cycle = (BuildCycleException) e.getCause();
-			List<Pair<? extends BuildUnit, BuildRequest<?, ?, ?, ?>>> cyclicUnits = cycle
+			List<Pair<BuildUnit<?>, BuildRequest<?, ?, ?, ?>>> cyclicUnits = cycle
 					.getCycleComponents();
 			assertEquals("Wrong number of units in cycle", 10,
 					cyclicUnits.size());
 			for (int i = 0; i < 10; i++) {
-				Pair<? extends BuildUnit, BuildRequest<?, ?, ?, ?>> unitPair = cyclicUnits
+				Pair<BuildUnit<?>, BuildRequest<?, ?, ?, ?>> unitPair = cyclicUnits
 						.get(i);
 				assertEquals("Wrong persistence path for unit",
 						getDepPathWithNumber(i), unitPair.a.getPersistentPath());

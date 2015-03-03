@@ -17,21 +17,19 @@ import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
-public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
+public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 
-	public static BuilderFactory<TestBuilderInput, BuildUnit, SimpleBuilder> factory = new BuilderFactory<SimpleBuilder.TestBuilderInput, BuildUnit, SimpleBuilder>() {
+	public static BuilderFactory<TestBuilderInput, TestOutput, SimpleBuilder> factory = new BuilderFactory<TestBuilderInput, TestOutput, SimpleBuilder>() {
 
-		/**
-		 * 
-		 */
+	
 		private static final long serialVersionUID = -6787456873371906431L;
 
 		@Override
-		public SimpleBuilder makeBuilder(TestBuilderInput input,
-				BuildManager manager) {
-			return new SimpleBuilder(input, manager);
+		public SimpleBuilder makeBuilder(TestBuilderInput input) {
+			return new SimpleBuilder(input);
 		}
 	};
+	
 
 	public static class TestBuilderInput implements Serializable {
 		/**
@@ -64,8 +62,9 @@ public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
 		}
 	}
 
-	private SimpleBuilder(TestBuilderInput input, BuildManager manager) {
-		super(input, factory, manager);
+	
+	private SimpleBuilder(TestBuilderInput input) {
+		super(input);
 	}
 
 	@Override
@@ -79,18 +78,13 @@ public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
 	}
 
 	@Override
-	protected Class<BuildUnit> resultClass() {
-		return BuildUnit.class;
-	}
-
-	@Override
 	protected Stamper defaultStamper() {
 		return ContentHashStamper.instance;
 	}
 
 	@Override
-	protected void build(BuildUnit result) throws IOException {
-		result.requires(input.inputPath);
+	protected TestOutput build() throws IOException {
+		requires(input.inputPath);
 		List<String> allLines = FileCommands.readFileLines(input.inputPath);
 
 		List<String> contentLines = new ArrayList<String>();
@@ -111,8 +105,9 @@ public class SimpleBuilder extends Builder<TestBuilderInput, BuildUnit> {
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
 		FileCommands.writeLinesFile(generatedFile, contentLines);
-		result.requires(generatedFile);
-		result.setState(BuildUnit.State.finished(true));
+		requires(generatedFile);
+		setState(BuildUnit.State.finished(true));
+		return new TestOutput();
 	}
 
 }

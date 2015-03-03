@@ -30,12 +30,11 @@ public class SimpleBuildUtilities {
 		FileCommands.writeLinesFile(path, lines);
 	}
 
-	public static BuildUnit unitForFile(RelativePath path, Path testBasePath)
+	public static BuildUnit<TestOutput> unitForFile(RelativePath path, Path testBasePath)
 			throws IOException {
 		TestRequirement req = new TestRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
 		
-		BuildUnit unit = BuildUnit.read(
-				BuildUnit.class, req.factory.makeBuilder(req.input, new BuildManager()).persistentPath(), req);
+		BuildUnit<TestOutput> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath(), req);
 		return unit;
 	}
 
