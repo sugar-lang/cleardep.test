@@ -17,6 +17,7 @@ import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.RequiredBuilderFailed;
+import org.sugarj.cleardep.dependency.BuildRequirement;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
@@ -107,26 +108,26 @@ public class BuildManagerCycleDetectionTest {
 	public void testCyclesDetected() throws IOException {
 
 		try {
-			BuildManager manager = new BuildManager();
+			BuildManager manager = BuildManager.acquire();
 			manager.require(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
 					testFactory, getPathWithNumber(0)));
 		} catch (RequiredBuilderFailed e) {
 			assertTrue("Cause is not a cycle",
 					e.getCause() instanceof BuildCycleException);
 			BuildCycleException cycle = (BuildCycleException) e.getCause();
-			List<Pair<BuildUnit<?>, BuildRequest<?, ?, ?, ?>>> cyclicUnits = cycle
+			List<BuildRequirement<?>> cyclicUnits = cycle
 					.getCycleComponents();
 			assertEquals("Wrong number of units in cycle", 10,
 					cyclicUnits.size());
 			for (int i = 0; i < 10; i++) {
-				Pair<BuildUnit<?>, BuildRequest<?, ?, ?, ?>> unitPair = cyclicUnits
+				BuildRequirement<?> requirement = cyclicUnits
 						.get(i);
 				assertEquals("Wrong persistence path for unit",
-						getDepPathWithNumber(i), unitPair.a.getPersistentPath());
+						getDepPathWithNumber(i), requirement.unit.getPersistentPath());
 				assertEquals("Wrong factory for unit", testFactory,
-						unitPair.b.factory);
+						requirement.req.factory);
 				assertEquals("Wrong input for unit", getPathWithNumber(i),
-						unitPair.b.input);
+						requirement.req.input);
 			}
 		}
 

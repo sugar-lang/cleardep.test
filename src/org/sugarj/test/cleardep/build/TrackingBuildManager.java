@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildManager;
@@ -11,12 +12,17 @@ import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.output.BuildOutput;
+import org.sugarj.cleardep.stamp.Stamp;
 import org.sugarj.common.path.Path;
 
 public class TrackingBuildManager extends BuildManager {
 	
 	private List<Serializable> requiredInputs = new ArrayList<Serializable>();
 	private List<Serializable> executedInputs = new ArrayList<Serializable>();
+	
+	public TrackingBuildManager() {
+		super(null);
+	}
 	
 	
 	@Override

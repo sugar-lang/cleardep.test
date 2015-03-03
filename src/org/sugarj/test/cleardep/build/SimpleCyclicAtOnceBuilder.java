@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.sugarj.cleardep.BuildUnit;
-import org.sugarj.cleardep.build.BuildManager;
-import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
+import org.sugarj.cleardep.stamp.ContentStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
@@ -18,9 +17,9 @@ import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
 public class SimpleCyclicAtOnceBuilder extends
-		CompileCycleAtOnceBuilder<TestBuilderInput, BuildUnit> {
+		CompileCycleAtOnceBuilder<TestBuilderInput, TestOutput> {
 
-	public static BuilderFactory<ArrayList<TestBuilderInput>, BuildUnit, SimpleCyclicAtOnceBuilder> factory = new BuilderFactory<ArrayList<TestBuilderInput>, BuildUnit, SimpleCyclicAtOnceBuilder>() {
+	public static BuilderFactory<ArrayList<TestBuilderInput>, TestOutput, SimpleCyclicAtOnceBuilder> factory = new BuilderFactory<ArrayList<TestBuilderInput>, TestOutput, SimpleCyclicAtOnceBuilder>() {
 
 		/**
 		 * 
@@ -29,14 +28,13 @@ public class SimpleCyclicAtOnceBuilder extends
 
 		@Override
 		public SimpleCyclicAtOnceBuilder makeBuilder(
-				ArrayList<TestBuilderInput> input, BuildManager manager) {
-			return new SimpleCyclicAtOnceBuilder(input, manager);
+				ArrayList<TestBuilderInput> input) {
+			return new SimpleCyclicAtOnceBuilder(input);
 		}
 	};
 
-	public SimpleCyclicAtOnceBuilder(ArrayList<TestBuilderInput> input,
-			BuildManager manager) {
-		super(input, factory, manager);
+	public SimpleCyclicAtOnceBuilder(ArrayList<TestBuilderInput> input) {
+		super(input, factory);
 	}
 
 	@Override
@@ -45,23 +43,14 @@ public class SimpleCyclicAtOnceBuilder extends
 	}
 
 	@Override
-	protected Path cyclePersistencePath(List<TestBuilderInput> input) {
-		String name = "";
-		for (TestBuilderInput singleInput : input) {
-			name += FileCommands.dropExtension(singleInput.getInputPath().getRelativePath());
-		}
-		name += ".txt.dep";
-		return new RelativePath(input.get(0).getBasePath(), name);
-	}
-
-	@Override
-	protected void buildCycle(BuildUnit result) throws Throwable {
+	protected TestOutput buildCycle() throws Throwable {
 
 		
 		Set<RelativePath> cyclicDependencies = new HashSet<>();
 		for (TestBuilderInput input : this.input) {
+			System.out.println(input);
 			cyclicDependencies.add(input.getInputPath());
-			result.requires(input.getInputPath());
+			requires(input.getInputPath());
 		}
 
 		List<String> contentLines = new ArrayList<>();
@@ -92,9 +81,10 @@ public class SimpleCyclicAtOnceBuilder extends
 			Path generatedFile = FileCommands.addExtension(
 					input.getInputPath(), "gen");
 			FileCommands.writeLinesFile(generatedFile, contentLines);
-			result.requires(generatedFile);
+			generates(generatedFile);
 		}
-		result.setState(BuildUnit.State.finished(true));
+		setState(BuildUnit.State.finished(true));
+		return new TestOutput();
 	}
 
 	@Override
@@ -107,13 +97,8 @@ public class SimpleCyclicAtOnceBuilder extends
 	}
 
 	@Override
-	protected Class<BuildUnit> resultClass() {
-		return BuildUnit.class;
-	}
-
-	@Override
 	protected Stamper defaultStamper() {
-		return ContentHashStamper.instance;
+		return ContentStamper.instance;
 	}
 
 }

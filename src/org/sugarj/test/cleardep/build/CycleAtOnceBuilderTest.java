@@ -15,7 +15,7 @@ public class CycleAtOnceBuilderTest extends SimpleBuildTest{
 
 	@Override
 	protected BuildRequest<?,?,?,?> requirementForInput(TestBuilderInput input) {
-		return new BuildRequest<ArrayList<TestBuilderInput>,BuildUnit, SimpleCyclicAtOnceBuilder, BuilderFactory<ArrayList<TestBuilderInput>, BuildUnit, SimpleCyclicAtOnceBuilder>> (SimpleCyclicAtOnceBuilder.factory, CompileCycleAtOnceBuilder.singletonArrayList(input));
+		return new BuildRequest<ArrayList<TestBuilderInput>,TestOutput, SimpleCyclicAtOnceBuilder, BuilderFactory<ArrayList<TestBuilderInput>, TestOutput, SimpleCyclicAtOnceBuilder>> (SimpleCyclicAtOnceBuilder.factory, CompileCycleAtOnceBuilder.singletonArrayList(input));
 	}
 	
 	@Test
