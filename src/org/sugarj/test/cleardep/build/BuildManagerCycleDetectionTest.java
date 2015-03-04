@@ -108,13 +108,15 @@ public class BuildManagerCycleDetectionTest {
 	public void testCyclesDetected() throws IOException {
 
 		try {
-			BuildManager manager = BuildManager.acquire();
-			manager.require(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
+			BuildManager.build(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
 					testFactory, getPathWithNumber(0)));
 		} catch (RequiredBuilderFailed e) {
 			assertTrue("Cause is not a cycle",
 					e.getCause() instanceof BuildCycleException);
 			BuildCycleException cycle = (BuildCycleException) e.getCause();
+			
+			assertEquals("Wrong cause path", getDepPathWithNumber(0), cycle.getCycleCause().getUnit().getPersistentPath());
+			
 			List<BuildRequirement<?>> cyclicUnits = cycle
 					.getCycleComponents();
 			assertEquals("Wrong number of units in cycle", 10,
@@ -122,6 +124,7 @@ public class BuildManagerCycleDetectionTest {
 			for (int i = 0; i < 10; i++) {
 				BuildRequirement<?> requirement = cyclicUnits
 						.get(i);
+				assertTrue(requirement.unit != null);
 				assertEquals("Wrong persistence path for unit",
 						getDepPathWithNumber(i), requirement.unit.getPersistentPath());
 				assertEquals("Wrong factory for unit", testFactory,
