@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.sugarj.cleardep.BuildUnit;
+import org.sugarj.cleardep.build.BuildCycle;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
 import org.sugarj.cleardep.stamp.ContentHashStamper;
@@ -43,12 +44,13 @@ public class SimpleCyclicAtOnceBuilder extends
 	}
 
 	@Override
-	protected TestOutput buildCycle() throws Throwable {
+	protected List<TestOutput> buildAll() throws Throwable {
 
-		
+		List<TestOutput> outputs = new ArrayList<>(this.input.size());
+
 		Set<RelativePath> cyclicDependencies = new HashSet<>();
 		for (TestBuilderInput input : this.input) {
-			System.out.println(input);
+			//System.out.println(input.getInputPath().getRelativePath());
 			cyclicDependencies.add(input.getInputPath());
 			requires(input.getInputPath());
 		}
@@ -81,10 +83,11 @@ public class SimpleCyclicAtOnceBuilder extends
 			Path generatedFile = FileCommands.addExtension(
 					input.getInputPath(), "gen");
 			FileCommands.writeLinesFile(generatedFile, contentLines);
-			generates(generatedFile);
+			generates(input, generatedFile);
+			outputs.add(new TestOutput());
 		}
 		setState(BuildUnit.State.finished(true));
-		return new TestOutput();
+		return outputs;
 	}
 
 	@Override

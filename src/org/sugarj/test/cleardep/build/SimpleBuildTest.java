@@ -65,7 +65,7 @@ public abstract class SimpleBuildTest {
 	protected void buildMainFile(TrackingBuildManager manager) throws IOException {
 		System.out.println("====== Build Project .... ======");
 		BuildRequest<?,?,?,?> req = requirementForInput(new TestBuilderInput(testBasePath, getRelativeFile("main.txt")));
-		manager.require(req);
+		manager.build(req);
 	}
 	
 	protected abstract BuildRequest<?,?,?,?> requirementForInput(TestBuilderInput input);
