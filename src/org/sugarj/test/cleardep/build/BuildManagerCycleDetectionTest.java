@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildCycleException;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.BuildRequest;
@@ -24,7 +23,6 @@ import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.common.util.Pair;
 import org.sugarj.test.cleardep.EmptyBuildOutput;
 
 public class BuildManagerCycleDetectionTest {

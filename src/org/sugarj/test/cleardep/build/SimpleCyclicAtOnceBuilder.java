@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.sugarj.cleardep.BuildUnit;
-import org.sugarj.cleardep.build.BuildCycle;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
-import org.sugarj.cleardep.stamp.ContentHashStamper;
 import org.sugarj.cleardep.stamp.ContentStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;

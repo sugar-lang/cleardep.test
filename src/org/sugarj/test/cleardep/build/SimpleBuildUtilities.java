@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sugarj.cleardep.BuildUnit;
-import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;

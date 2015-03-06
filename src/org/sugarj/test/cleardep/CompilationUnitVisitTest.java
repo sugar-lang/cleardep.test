@@ -1,17 +1,16 @@
 package org.sugarj.test.cleardep;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.sugarj.test.cleardep.CompilationUnitTestUtils.makeEdgeFrom;
 import static org.sugarj.test.cleardep.CompilationUnitTestUtils.makeNode;
 import static org.sugarj.test.cleardep.CompilationUnitTestUtils.set;
-import org.sugarj.test.cleardep.CompilationUnitTestUtils.NodeOutput;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.sugarj.cleardep.BuildUnit;
+import org.sugarj.test.cleardep.CompilationUnitTestUtils.NodeOutput;
 
 public class CompilationUnitVisitTest {
 	

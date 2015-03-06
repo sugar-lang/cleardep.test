@@ -51,7 +51,7 @@ public class RebuildInconsistentTest extends SimpleBuildTest{
 		TrackingBuildManager manager = buildMainFile();
 		// Now require that all compilationUnits are consistent
 		for (RelativePath file : allFiles) {
-			BuildUnit unit = unitForFile(file, testBasePath);
+			BuildUnit<TestOutput> unit = unitForFile(file, testBasePath);
 			assertNotNull(
 					"No unit was persisted for path: " + file.getRelativePath(),
 					unit);

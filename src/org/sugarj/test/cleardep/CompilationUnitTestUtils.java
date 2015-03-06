@@ -1,5 +1,6 @@
 package org.sugarj.test.cleardep;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,10 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sugarj.cleardep.BuildUnit;
-import org.sugarj.cleardep.build.BuildManager;
+import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.output.BuildOutput;
+import org.sugarj.common.path.AbsolutePath;
 
 public class CompilationUnitTestUtils {
 
@@ -47,7 +49,7 @@ public class CompilationUnitTestUtils {
 		
 	}
 
-	private static BuilderFactory<NodeInput, EmptyBuildOutput, Builder<NodeInput, EmptyBuildOutput>> factory = new BuilderFactory<NodeInput, EmptyBuildOutput, Builder<NodeInput, EmptyBuildOutput>>() {
+	private static BuilderFactory<NodeInput, NodeOutput, Builder<NodeInput, NodeOutput>> factory = new BuilderFactory<NodeInput, NodeOutput, Builder<NodeInput, NodeOutput>>() {
 
 		/**
 		 * 
@@ -55,16 +57,20 @@ public class CompilationUnitTestUtils {
 		private static final long serialVersionUID = -695869678306450263L;
 
 		@Override
-		public Builder<NodeInput, EmptyBuildOutput> makeBuilder(NodeInput input) {
+		public Builder<NodeInput, NodeOutput> makeBuilder(NodeInput input) {
 			throw new UnsupportedOperationException();
 		}
 
 	};
 
 	public static BuildUnit<NodeOutput> makeNode(String name) {
-		BuildUnit<NodeOutput> unit = new BuildUnit<NodeOutput>();
+		try {
+		BuildUnit<NodeOutput> unit = BuildUnit.create(new AbsolutePath("./"+name), new BuildRequest<>(factory, new NodeInput(name)));
 		unit.setBuildResult(new NodeOutput(name));
 		return unit;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static interface EdgeMaker {
@@ -101,7 +107,7 @@ public class CompilationUnitTestUtils {
 				@Override
 				public AndEdgeMaker and(BuildUnit<NodeOutput> dst) {
 					for (BuildUnit<NodeOutput> src : srcs) {
-						src.dependsOn(dst);
+						src.requires(dst);
 					}
 					return this;
 				}
