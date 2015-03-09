@@ -76,6 +76,7 @@ public class RebuildInconsistentTest extends SimpleBuildTest{
 		TrackingBuildManager manager = new TrackingBuildManager();
 		buildMainFile(manager);
 
+		validateThat(requiredFilesOf(manager).containsAll(mainFile, dep2File, dep2_1File));
 		validateThat(in(requiredFilesOf(manager)).is(mainFile).before(dep2File, dep1File));
 		validateThat(executedFilesOf(manager).containsSameElements(mainFile));
 	}
