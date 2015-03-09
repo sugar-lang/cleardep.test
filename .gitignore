@@ -5,3 +5,5 @@ testdata/RebuildInconsistentTest/testBuildRootInconsistent
 testdata/RebuildInconsistentTest/testBuildLeafInconsistent
 testdata/CycleAtOnceBuilderTest/buildCycle
 testdata/CycleDetectionTest
+testdata/FixpointBuilderCycleTest/testBuildModuloCycle
+testdata/FixpointBuilderCycleTest/testBuildNoCycle

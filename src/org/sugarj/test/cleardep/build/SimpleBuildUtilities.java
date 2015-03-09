@@ -33,7 +33,7 @@ public class SimpleBuildUtilities {
 			throws IOException {
 		TestRequirement req = new TestRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
 		
-		BuildUnit<TestOutput> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath(), req);
+		BuildUnit<TestOutput> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath());
 		return unit;
 	}
 
