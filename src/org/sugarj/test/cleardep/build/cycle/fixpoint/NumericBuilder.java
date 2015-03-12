@@ -65,12 +65,12 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 							+ extension + " is unknown.");
 				}
 				// Cycle support: if there is no output currently, ignore the dependency
-				if (output != null) {
+				if (output != null && FileCommands.exists(output.getResultFile())) {
 				myNumber = this.getOperator().apply(myNumber,
 						output.getResult());
 				requires(output.getResultFile());
 
-				}
+				} 
 			}
 		}
 		
@@ -79,7 +79,7 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 		generates(outFile);
 		
 		setState(State.finished(true));
-		return new IntegerOutput(outFile);
+		return new IntegerOutput(outFile, myNumber);
 
 	}
 

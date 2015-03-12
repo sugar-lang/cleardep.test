@@ -29,7 +29,7 @@ public abstract class SimpleBuildTest extends ScopedBuildTest{
 	protected void buildMainFile(TrackingBuildManager manager) throws IOException {
 		System.out.println("====== Build Project .... ======");
 		BuildRequest<?,?,?,?> req = requirementForInput(new TestBuilderInput(testBasePath, getRelativeFile("main.txt")));
-		manager.require(req);
+		manager.require(null, req);
 	}
 	
 	protected abstract BuildRequest<?,?,?,?> requirementForInput(TestBuilderInput input);

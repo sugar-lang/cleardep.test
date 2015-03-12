@@ -12,6 +12,7 @@ import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.cycle.fixpoint.FileInput;
 
 public class SimpleBuildUtilities {
 	
@@ -42,6 +43,8 @@ public class SimpleBuildUtilities {
 		for (Serializable s : inputs) {
 			if (s instanceof TestBuilderInput) {
 				fileList.add(((TestBuilderInput) s).getInputPath());
+			} else if (s instanceof FileInput){
+				fileList.add(((FileInput) s).getFile());
 			} else {
 				fail("Illegal input");
 			}

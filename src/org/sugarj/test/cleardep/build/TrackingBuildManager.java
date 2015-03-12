@@ -15,8 +15,9 @@ import org.sugarj.common.path.Path;
 
 public class TrackingBuildManager extends BuildManager {
 	
-	private List<Serializable> requiredInputs = new ArrayList<Serializable>();
-	private List<Serializable> executedInputs = new ArrayList<Serializable>();
+	private List<Serializable> requiredInputs = new ArrayList<>();
+	private List<Serializable> executedInputs = new ArrayList<>();
+	private List<Serializable> successfullyExecutedInputs = new ArrayList<>();
 	
 	public TrackingBuildManager() {
 		super(null);
@@ -24,16 +25,16 @@ public class TrackingBuildManager extends BuildManager {
 	
 	
 	public <In extends Serializable, Out extends BuildOutput, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
-			F factory, In input) throws IOException {
+			BuildUnit<?> source, F factory, In input) throws IOException {
 		requiredInputs.add(input);
-		return super.require(new BuildRequest<>(factory, input));
+		return super.require(source, new BuildRequest<>(factory, input));
 	}
 	
 	@Override
 	public <In extends Serializable, Out extends BuildOutput, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
-			BuildRequest<In, Out, B, F> buildReq) throws IOException {
+			BuildUnit<?> source, BuildRequest<In, Out, B, F> buildReq) throws IOException {
 		requiredInputs.add(buildReq.input);
-		return super.require(buildReq);
+		return super.require(source, buildReq);
 	}
 	
 	@Override
@@ -41,7 +42,9 @@ public class TrackingBuildManager extends BuildManager {
 			Builder<In, Out> builder, Path dep,
 			BuildRequest<In, Out, B, F> buildReq) throws IOException {
 		executedInputs.add(buildReq.input);
-		return super.executeBuilder(builder, dep, buildReq);
+		BuildUnit<Out> result =  super.executeBuilder(builder, dep, buildReq);
+		successfullyExecutedInputs.add(buildReq.input);
+		return result;
 	}
 	
 	public List<Serializable> getRequiredInputs() {
@@ -49,6 +52,9 @@ public class TrackingBuildManager extends BuildManager {
 	}
 	public List<Serializable> getExecutedInputs() {
 		return executedInputs;
+	}
+	public List<Serializable> getSuccessfullyExecutedInputs() {
+		return successfullyExecutedInputs;
 	}
 
 }

@@ -73,7 +73,7 @@ public class Validators {
 				public void validate() {
 					assertEquals(
 							"list does not contains the expected elements",
-							set(list), set(elems));
+							set(elems), set(list));
 				}
 			};
 		}
@@ -84,10 +84,19 @@ public class Validators {
 				@Override
 				public void validate() {
 					for (T elem : elems) {
-					assertTrue(
-							"list does not contain " + elem,
-							list.contains(elem));
+						assertTrue("list does not contain " + elem,
+								list.contains(elem));
 					}
+				}
+			};
+		}
+		
+		public Validator hasSize(final int size) {
+			return new Validator() {
+				
+				@Override
+				public void validate() {
+					assertEquals("Wrong numbers of elements", size, list.size());
 				}
 			};
 		}
@@ -119,6 +128,12 @@ public class Validators {
 			TrackingBuildManager manager) {
 		return new ListValidatorBuilder<>(
 				inputToFileList(manager.getExecutedInputs()));
+	}
+
+	public static ListValidatorBuilder<RelativePath> successfulyExecutedFilesOf(
+			TrackingBuildManager manager) {
+		return new ListValidatorBuilder<>(
+				inputToFileList(manager.getSuccessfullyExecutedInputs()));
 	}
 
 }
