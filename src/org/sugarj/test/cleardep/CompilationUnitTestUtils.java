@@ -12,7 +12,6 @@ import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
-import org.sugarj.cleardep.output.BuildOutput;
 import org.sugarj.common.path.AbsolutePath;
 
 public class CompilationUnitTestUtils {
@@ -29,7 +28,7 @@ public class CompilationUnitTestUtils {
 		}
 	}
 	
-	public static class NodeOutput implements BuildOutput {
+	public static class NodeOutput implements Serializable {
 
 		private final String name;
 		
@@ -40,13 +39,6 @@ public class CompilationUnitTestUtils {
 			this.name = name;
 		}
 
-
-
-		@Override
-		public boolean isConsistent() {
-			return true;
-		}
-		
 	}
 
 	private static BuilderFactory<NodeInput, NodeOutput, Builder<NodeInput, NodeOutput>> factory = new BuilderFactory<NodeInput, NodeOutput, Builder<NodeInput, NodeOutput>>() {

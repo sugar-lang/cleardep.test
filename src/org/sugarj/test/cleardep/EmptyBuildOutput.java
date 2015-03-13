@@ -1,8 +1,8 @@
 package org.sugarj.test.cleardep;
 
-import org.sugarj.cleardep.output.BuildOutput;
+import java.io.Serializable;
 
-public final class EmptyBuildOutput implements BuildOutput {
+public final class EmptyBuildOutput implements Serializable {
 
 	/**
 	 * 
@@ -12,10 +12,5 @@ public final class EmptyBuildOutput implements BuildOutput {
 	public static final EmptyBuildOutput instance = new EmptyBuildOutput();
 	
 	private EmptyBuildOutput(){}
-
-	@Override
-	public boolean isConsistent() {
-		return true;
-	}
 
 }

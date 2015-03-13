@@ -10,7 +10,6 @@ import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
-import org.sugarj.cleardep.output.BuildOutput;
 import org.sugarj.common.path.Path;
 
 public class TrackingBuildManager extends BuildManager {
@@ -24,21 +23,21 @@ public class TrackingBuildManager extends BuildManager {
 	}
 	
 	
-	public <In extends Serializable, Out extends BuildOutput, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
+	public <In extends Serializable, Out extends Serializable, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
 			BuildUnit<?> source, F factory, In input) throws IOException {
 		requiredInputs.add(input);
 		return super.require(source, new BuildRequest<>(factory, input));
 	}
 	
 	@Override
-	public <In extends Serializable, Out extends BuildOutput, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
+	public <In extends Serializable, Out extends Serializable, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> require(
 			BuildUnit<?> source, BuildRequest<In, Out, B, F> buildReq) throws IOException {
 		requiredInputs.add(buildReq.input);
 		return super.require(source, buildReq);
 	}
 	
 	@Override
-	protected <In extends Serializable, Out extends BuildOutput, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> executeBuilder(
+	protected <In extends Serializable, Out extends Serializable, B extends Builder<In, Out>, F extends BuilderFactory<In, Out, B>> BuildUnit<Out> executeBuilder(
 			Builder<In, Out> builder, Path dep,
 			BuildRequest<In, Out, B, F> buildReq) throws IOException {
 		executedInputs.add(buildReq.input);

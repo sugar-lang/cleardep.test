@@ -1,12 +1,12 @@
 package org.sugarj.test.cleardep.build.cycle.fixpoint;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-import org.sugarj.cleardep.output.BuildOutput;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 
-public class IntegerOutput implements BuildOutput {
+public class IntegerOutput implements Serializable {
 	/**
 	 * 
 	 */
@@ -27,7 +27,7 @@ public class IntegerOutput implements BuildOutput {
 		return resultFile;
 	}
 	
-	@Override
+	// TODO encode this via OutputStamper
 	public boolean isConsistent() {
 		try {
 			return FileCommands.fileExists(resultFile) && FileUtils.readIntFromFile(resultFile) == value;
