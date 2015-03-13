@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
+import org.sugarj.cleardep.output.None;
 import org.sugarj.cleardep.stamp.FileHashStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
@@ -16,9 +17,9 @@ import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
-public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
+public class SimpleBuilder extends Builder<TestBuilderInput, None> {
 
-	public static BuilderFactory<TestBuilderInput, TestOutput, SimpleBuilder> factory = new BuilderFactory<TestBuilderInput, TestOutput, SimpleBuilder>() {
+	public static BuilderFactory<TestBuilderInput, None, SimpleBuilder> factory = new BuilderFactory<TestBuilderInput, None, SimpleBuilder>() {
 
 	
 		private static final long serialVersionUID = -6787456873371906431L;
@@ -82,7 +83,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 	}
 
 	@Override
-	protected TestOutput build() throws IOException {
+	protected None build() throws IOException {
 		require(input.inputPath);
 		List<String> allLines = FileCommands.readFileLines(input.inputPath);
 
@@ -104,9 +105,9 @@ public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
 		FileCommands.writeLinesFile(generatedFile, contentLines);
-		require(generatedFile);
+		generate(generatedFile);
 		setState(BuildUnit.State.finished(true));
-		return new TestOutput();
+		return None.val;
 	}
 
 }

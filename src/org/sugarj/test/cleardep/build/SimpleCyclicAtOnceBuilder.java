@@ -8,6 +8,7 @@ import java.util.Set;
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
+import org.sugarj.cleardep.output.None;
 import org.sugarj.cleardep.stamp.FileContentStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
@@ -16,9 +17,9 @@ import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
 public class SimpleCyclicAtOnceBuilder extends
-		CompileCycleAtOnceBuilder<TestBuilderInput, TestOutput> {
+		CompileCycleAtOnceBuilder<TestBuilderInput, None> {
 
-	public static BuilderFactory<ArrayList<TestBuilderInput>, TestOutput, SimpleCyclicAtOnceBuilder> factory = new BuilderFactory<ArrayList<TestBuilderInput>, TestOutput, SimpleCyclicAtOnceBuilder>() {
+	public static BuilderFactory<ArrayList<TestBuilderInput>, None, SimpleCyclicAtOnceBuilder> factory = new BuilderFactory<ArrayList<TestBuilderInput>, None, SimpleCyclicAtOnceBuilder>() {
 
 		/**
 		 * 
@@ -42,9 +43,9 @@ public class SimpleCyclicAtOnceBuilder extends
 	}
 
 	@Override
-	protected List<TestOutput> buildAll() throws Throwable {
+	protected List<None> buildAll() throws Throwable {
 
-		List<TestOutput> outputs = new ArrayList<>(this.input.size());
+		List<None> outputs = new ArrayList<>(this.input.size());
 
 		Set<RelativePath> cyclicDependencies = new HashSet<>();
 		for (TestBuilderInput input : this.input) {
@@ -82,7 +83,7 @@ public class SimpleCyclicAtOnceBuilder extends
 					input.getInputPath(), "gen");
 			FileCommands.writeLinesFile(generatedFile, contentLines);
 			generates(input, generatedFile);
-			outputs.add(new TestOutput());
+			outputs.add(None.val);
 		}
 		setState(BuildUnit.State.finished(true));
 		return outputs;

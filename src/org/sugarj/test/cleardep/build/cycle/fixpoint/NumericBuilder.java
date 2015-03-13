@@ -1,5 +1,6 @@
 package org.sugarj.test.cleardep.build.cycle.fixpoint;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.sugarj.cleardep.BuildUnit.State;
@@ -65,12 +66,17 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 							+ extension + " is unknown.");
 				}
 				// Cycle support: if there is no output currently, ignore the dependency
-				if (output != null && FileCommands.exists(output.getResultFile())) {
+				//if (output != null && FileCommands.exists(output.getResultFile())) {
+				if (output != null) {
+					try {
 				myNumber = this.getOperator().apply(myNumber,
 						output.getResult());
-				require(output.getResultFile());
+				//require(output.getResultFile());
 
-				} 
+					} catch (IOException e) {}
+				}
+			
+				//} 
 			}
 		}
 		

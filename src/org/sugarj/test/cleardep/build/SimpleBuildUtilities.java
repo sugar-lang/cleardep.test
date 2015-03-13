@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.sugarj.cleardep.BuildUnit;
+import org.sugarj.cleardep.output.None;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
@@ -30,11 +31,11 @@ public class SimpleBuildUtilities {
 		FileCommands.writeLinesFile(path, lines);
 	}
 
-	public static BuildUnit<TestOutput> unitForFile(RelativePath path, Path testBasePath)
+	public static BuildUnit<None> unitForFile(RelativePath path, Path testBasePath)
 			throws IOException {
 		TestRequirement req = new TestRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
 		
-		BuildUnit<TestOutput> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath());
+		BuildUnit<None> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath());
 		return unit;
 	}
 

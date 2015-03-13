@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.sugarj.cleardep.BuildUnit;
+import org.sugarj.cleardep.output.None;
 import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 
@@ -51,7 +52,7 @@ public class RebuildInconsistentTest extends SimpleBuildTest{
 		TrackingBuildManager manager = buildMainFile();
 		// Now require that all compilationUnits are consistent
 		for (RelativePath file : allFiles) {
-			BuildUnit<TestOutput> unit = unitForFile(file, testBasePath);
+			BuildUnit<None> unit = unitForFile(file, testBasePath);
 			assertNotNull(
 					"No unit was persisted for path: " + file.getRelativePath(),
 					unit);
