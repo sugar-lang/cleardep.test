@@ -52,7 +52,7 @@ public class GCDHomogeneousCycleTest extends ScopedBuildTest {
 		}
  	}
 
-	@Test
+	@Test (timeout = 1000)
 	public void testBuildGCDCycle() throws IOException {
 		BuildUnit<IntegerOutput> resultUnit = new TrackingBuildManager()
 				.require(null,mainBuildRequest);
@@ -61,7 +61,7 @@ public class GCDHomogeneousCycleTest extends ScopedBuildTest {
 		assertAllFilesConsistent();
 	}
 
-	@Test
+	@Test (timeout = 1000)
 	public void testRebuildRootUnitInconsistent() throws IOException {
 
 		// Do a first clean build
@@ -88,7 +88,7 @@ public class GCDHomogeneousCycleTest extends ScopedBuildTest {
 
 	}
 	
-	@Test
+	@Test (timeout = 1000)
 	public void testRebuildCycle1UnitInconsistent() throws IOException {
 
 		// Do a first clean build
