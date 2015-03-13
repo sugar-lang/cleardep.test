@@ -5,7 +5,7 @@ import java.util.List;
 import org.sugarj.cleardep.BuildUnit.State;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.CycleSupport;
-import org.sugarj.cleardep.stamp.ContentStamper;
+import org.sugarj.cleardep.stamp.FileContentStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
@@ -30,7 +30,7 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 
 	@Override
 	protected final Stamper defaultStamper() {
-		return ContentStamper.instance;
+		return FileContentStamper.instance;
 	}
 	
 	@Override
@@ -40,12 +40,12 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 
 	@Override
 	protected final IntegerOutput build() throws Throwable {
-		requires(this.input.getFile());
+		require(this.input.getFile());
 		int myNumber = FileUtils.readIntFromFile(this.input.getFile());
 
 		
 		if (FileCommands.exists(this.input.getDepsFile())) {
-			requires(this.input.getDepsFile());
+			require(this.input.getDepsFile());
 			List<RelativePath> depPaths = FileUtils.readPathsFromFile(
 					this.input.getDepsFile(), this.input.getWorkingDir());
 
@@ -55,11 +55,11 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 				IntegerOutput output = null;
 				String extension = FileCommands.getExtension(path);
 				if (extension.equals("modulo")) {
-					output = require(ModuloBuilder.factory, input);
+					output = requireBuild(ModuloBuilder.factory, input);
 				} else if (extension.equals("divide")) {
-					output = require(DivideByBuilder.factory, input);
+					output = requireBuild(DivideByBuilder.factory, input);
 				} else if (extension.equals("gcd")) {
-					output = require(GCDBuilder.factory, input);
+					output = requireBuild(GCDBuilder.factory, input);
 				} else {
 					throw new IllegalArgumentException("The extension "
 							+ extension + " is unknown.");
@@ -68,7 +68,7 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 				if (output != null && FileCommands.exists(output.getResultFile())) {
 				myNumber = this.getOperator().apply(myNumber,
 						output.getResult());
-				requires(output.getResultFile());
+				require(output.getResultFile());
 
 				} 
 			}
@@ -76,7 +76,7 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 		
 		Path outFile = FileCommands.replaceExtension(input.getFile(), "out");
 		FileUtils.writeIntToFile(myNumber, outFile);
-		generates(outFile);
+		generate(outFile);
 		
 		setState(State.finished(true));
 		return new IntegerOutput(outFile, myNumber);

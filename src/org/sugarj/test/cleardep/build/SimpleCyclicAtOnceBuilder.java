@@ -8,7 +8,7 @@ import java.util.Set;
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
-import org.sugarj.cleardep.stamp.ContentStamper;
+import org.sugarj.cleardep.stamp.FileContentStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
@@ -50,7 +50,7 @@ public class SimpleCyclicAtOnceBuilder extends
 		for (TestBuilderInput input : this.input) {
 			//System.out.println(input.getInputPath().getRelativePath());
 			cyclicDependencies.add(input.getInputPath());
-			requires(input.getInputPath());
+			require(input.getInputPath());
 		}
 
 		List<String> contentLines = new ArrayList<>();
@@ -99,7 +99,7 @@ public class SimpleCyclicAtOnceBuilder extends
 
 	@Override
 	protected Stamper defaultStamper() {
-		return ContentStamper.instance;
+		return FileContentStamper.instance;
 	}
 
 }

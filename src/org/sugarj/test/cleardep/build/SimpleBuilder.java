@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
-import org.sugarj.cleardep.stamp.ContentHashStamper;
+import org.sugarj.cleardep.stamp.FileHashStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
@@ -78,12 +78,12 @@ public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 
 	@Override
 	protected Stamper defaultStamper() {
-		return ContentHashStamper.instance;
+		return FileHashStamper.instance;
 	}
 
 	@Override
 	protected TestOutput build() throws IOException {
-		requires(input.inputPath);
+		require(input.inputPath);
 		List<String> allLines = FileCommands.readFileLines(input.inputPath);
 
 		List<String> contentLines = new ArrayList<String>();
@@ -95,7 +95,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 						input.basePath, new RelativePath(input.getBasePath(),
 								depFile));
 				TestRequirement req = new TestRequirement(factory, depInput);
-				require(req);
+				requireBuild(req);
 			} else {
 				contentLines.add(line);
 			}
@@ -104,7 +104,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, TestOutput> {
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
 		FileCommands.writeLinesFile(generatedFile, contentLines);
-		requires(generatedFile);
+		require(generatedFile);
 		setState(BuildUnit.State.finished(true));
 		return new TestOutput();
 	}

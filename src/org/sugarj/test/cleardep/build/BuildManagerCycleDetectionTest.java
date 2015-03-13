@@ -17,7 +17,7 @@ import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.RequiredBuilderFailed;
 import org.sugarj.cleardep.dependency.BuildRequirement;
-import org.sugarj.cleardep.stamp.ContentHashStamper;
+import org.sugarj.cleardep.stamp.FileHashStamper;
 import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.AbsolutePath;
@@ -64,7 +64,7 @@ public class BuildManagerCycleDetectionTest {
 
 		@Override
 		protected Stamper defaultStamper() {
-			return ContentHashStamper.instance;
+			return FileHashStamper.instance;
 		}
 
 		@Override
@@ -88,7 +88,7 @@ public class BuildManagerCycleDetectionTest {
 					inputWithoutExt.length() - 1)
 					+ number + ".txt");
 
-			require(testFactory, req);
+			requireBuild(testFactory, req);
 			return EmptyBuildOutput.instance;
 		}
 
