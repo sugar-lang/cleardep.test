@@ -82,7 +82,7 @@ public abstract class NumericBuilder extends Builder<FileInput, IntegerOutput> {
 		
 		Path outFile = FileCommands.replaceExtension(input.getFile(), "out");
 		FileUtils.writeIntToFile(myNumber, outFile);
-		generate(outFile);
+		provide(outFile);
 		
 		setState(State.finished(true));
 		return new IntegerOutput(outFile, myNumber);

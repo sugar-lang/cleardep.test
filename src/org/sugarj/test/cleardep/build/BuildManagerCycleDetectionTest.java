@@ -53,7 +53,7 @@ public class BuildManagerCycleDetectionTest {
 		}
 
 		@Override
-		protected String taskDescription() {
+		protected String description() {
 			return "Test Builder " + input.getAbsolutePath();
 		}
 

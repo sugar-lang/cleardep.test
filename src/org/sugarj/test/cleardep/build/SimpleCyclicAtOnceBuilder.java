@@ -90,7 +90,7 @@ public class SimpleCyclicAtOnceBuilder extends
 	}
 
 	@Override
-	protected String taskDescription() {
+	protected String description() {
 		String descr = "Cyclic SimpleBuilder for ";
 		for (TestBuilderInput input : this.input) {
 			descr += input.getInputPath().getRelativePath() + ", ";

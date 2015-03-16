@@ -68,7 +68,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, None> {
 	}
 
 	@Override
-	protected String taskDescription() {
+	protected String description() {
 		return "Test Builder for " + input.getInputPath().getRelativePath();
 	}
 
@@ -105,7 +105,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, None> {
 		// Write the content to a generated file
 		Path generatedFile = FileCommands.addExtension(input.inputPath, "gen");
 		FileCommands.writeLinesFile(generatedFile, contentLines);
-		generate(generatedFile);
+		provide(generatedFile);
 		setState(BuildUnit.State.finished(true));
 		return None.val;
 	}
