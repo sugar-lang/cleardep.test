@@ -97,7 +97,7 @@ public class GCDMultipleCyclesTest extends ScopedBuildTest{
 		FileUtils.writeIntToFile(81, cycle3);
 		
 		TrackingBuildManager manager = build();
-		validateThat(successfulyExecutedFilesOf(manager).containsSameElements(main, cycle1, cycle3));
+		validateThat(successfulyExecutedFilesOf(manager).containsSameElements(main, cycle3, cycle1));
 		validateThat(requiredFilesOf(manager).containsSameElements(main, cycle1, cycle2, cycle3, leaf));
 	}
 	
