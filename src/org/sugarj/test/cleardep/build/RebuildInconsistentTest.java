@@ -3,13 +3,13 @@ package org.sugarj.test.cleardep.build;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.addInputFileContent;
-import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.addInputFileDep;
-import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.unitForFile;
 import static org.sugarj.test.cleardep.build.Validators.executedFilesOf;
 import static org.sugarj.test.cleardep.build.Validators.in;
 import static org.sugarj.test.cleardep.build.Validators.requiredFilesOf;
 import static org.sugarj.test.cleardep.build.Validators.validateThat;
+import static org.sugarj.test.cleardep.build.once.SimpleBuildUtilities.addInputFileContent;
+import static org.sugarj.test.cleardep.build.once.SimpleBuildUtilities.addInputFileDep;
+import static org.sugarj.test.cleardep.build.once.SimpleBuildUtilities.unitForFile;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.output.None;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder;
+import org.sugarj.test.cleardep.build.once.SimpleRequirement;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public class RebuildInconsistentTest extends SimpleBuildTest{
 
@@ -43,8 +45,8 @@ public class RebuildInconsistentTest extends SimpleBuildTest{
 	
 
 	@Override
-	protected TestRequirement requirementForInput(TestBuilderInput input) {
-		return new TestRequirement(SimpleBuilder.factory, input);
+	protected SimpleRequirement requirementForInput(TestBuilderInput input) {
+		return new SimpleRequirement(SimpleBuilder.factory, input);
 	}
 
 	

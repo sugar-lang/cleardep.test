@@ -11,7 +11,7 @@ import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.AbsolutePath;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public abstract class SimpleBuildTest extends ScopedBuildTest{
 	

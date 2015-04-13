@@ -1,4 +1,4 @@
-package org.sugarj.test.cleardep.build;
+package org.sugarj.test.cleardep.build.once;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +8,9 @@ import org.sugarj.cleardep.build.BuildRequest;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
 import org.sugarj.cleardep.output.None;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.SimpleBuildTest;
+import org.sugarj.test.cleardep.build.TrackingBuildManager;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public class CycleAtOnceBuilderTest extends SimpleBuildTest{
 

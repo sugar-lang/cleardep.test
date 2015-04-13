@@ -1,4 +1,4 @@
-package org.sugarj.test.cleardep.build;
+package org.sugarj.test.cleardep.build.once;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,7 +15,7 @@ import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public class SimpleBuilder extends Builder<TestBuilderInput, None> {
 
@@ -95,7 +95,7 @@ public class SimpleBuilder extends Builder<TestBuilderInput, None> {
 				TestBuilderInput depInput = new TestBuilderInput(
 						input.basePath, new RelativePath(input.getBasePath(),
 								depFile));
-				TestRequirement req = new TestRequirement(factory, depInput);
+				SimpleRequirement req = new SimpleRequirement(factory, depInput);
 				requireBuild(req);
 			} else {
 				contentLines.add(line);

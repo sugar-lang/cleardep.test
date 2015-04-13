@@ -1,4 +1,4 @@
-package org.sugarj.test.cleardep.build;
+package org.sugarj.test.cleardep.build.once;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import org.sugarj.cleardep.stamp.Stamper;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public class SimpleCyclicAtOnceBuilder extends
 		CompileCycleAtOnceBuilder<TestBuilderInput, None> {

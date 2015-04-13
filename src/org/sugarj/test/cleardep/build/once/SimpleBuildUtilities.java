@@ -1,4 +1,4 @@
-package org.sugarj.test.cleardep.build;
+package org.sugarj.test.cleardep.build.once;
 
 import static org.junit.Assert.fail;
 
@@ -12,8 +12,8 @@ import org.sugarj.cleardep.output.None;
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.path.Path;
 import org.sugarj.common.path.RelativePath;
-import org.sugarj.test.cleardep.build.SimpleBuilder.TestBuilderInput;
 import org.sugarj.test.cleardep.build.cycle.fixpoint.FileInput;
+import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 
 public class SimpleBuildUtilities {
 	
@@ -30,10 +30,17 @@ public class SimpleBuildUtilities {
 		lines.add("Dep:"+dep.getRelativePath());
 		FileCommands.writeLinesFile(path, lines);
 	}
+	
+	public static void removeInputFileDep(RelativePath path, RelativePath dep)
+			throws IOException {
+		List<String> lines = FileCommands.readFileLines(path);
+		lines.remove("Dep:"+dep.getRelativePath());
+		FileCommands.writeLinesFile(path, lines);
+	}
 
 	public static BuildUnit<None> unitForFile(RelativePath path, Path testBasePath)
 			throws IOException {
-		TestRequirement req = new TestRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
+		SimpleRequirement req = new SimpleRequirement(SimpleBuilder.factory,new TestBuilderInput(testBasePath, path));
 		
 		BuildUnit<None> unit = BuildUnit.read(req.factory.makeBuilder(req.input).persistentPath());
 		return unit;

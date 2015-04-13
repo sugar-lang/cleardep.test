@@ -6,10 +6,13 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sugarj.cleardep.BuildUnit;
 import org.sugarj.cleardep.build.BuildCycleException;
 import org.sugarj.cleardep.build.BuildManager;
 import org.sugarj.cleardep.build.BuildRequest;
@@ -26,11 +29,12 @@ import org.sugarj.common.path.RelativePath;
 import org.sugarj.test.cleardep.EmptyBuildOutput;
 
 public class BuildManagerCycleDetectionTest {
-	
-	private static AbsolutePath baseDir = new AbsolutePath(new File("testdata/CycleDetectionTest/").getAbsolutePath());
-	
+
+	private static AbsolutePath baseDir = new AbsolutePath(new File(
+			"testdata/CycleDetectionTest/").getAbsolutePath());
+
 	@Before
-	public void emptyDir() throws IOException{
+	public void emptyDir() throws IOException {
 		FileCommands.delete(baseDir);
 		FileCommands.createDir(baseDir);
 	}
@@ -95,36 +99,44 @@ public class BuildManagerCycleDetectionTest {
 	}
 
 	private RelativePath getDepPathWithNumber(int num) {
-		return new RelativePath(baseDir,"Test" + num + ".dep");
+		return new RelativePath(baseDir, "Test" + num + ".dep");
 	}
 
 	private RelativePath getPathWithNumber(int num) {
-		return new RelativePath(baseDir,"Test" + num + ".txt");
+		return new RelativePath(baseDir, "Test" + num + ".txt");
 	}
 
 	@Test
 	public void testCyclesDetected() throws IOException {
 
 		try {
-			BuildManager.build(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
-					testFactory, getPathWithNumber(0)));
+			BuildManager
+					.build(new BuildRequest<Path, EmptyBuildOutput, TestBuilder, BuilderFactory<Path, EmptyBuildOutput, TestBuilder>>(
+							testFactory, getPathWithNumber(0)));
 		} catch (RequiredBuilderFailed e) {
 			assertTrue("Cause is not a cycle",
 					e.getCause() instanceof BuildCycleException);
 			BuildCycleException cycle = (BuildCycleException) e.getCause();
-			
-			assertEquals("Wrong cause path", getDepPathWithNumber(0), cycle.getCycleCause().getUnit().getPersistentPath());
-			
-			List<BuildRequirement<?>> cyclicUnits = cycle
-					.getCycleComponents();
+
+			assertEquals("Wrong cause path", getDepPathWithNumber(0), cycle
+					.getCycleCause().getPersistentPath());
+
+			List<BuildRequirement<?>> cyclicUnits = cycle.getCycleComponents();
 			assertEquals("Wrong number of units in cycle", 10,
 					cyclicUnits.size());
+
 			for (int i = 0; i < 10; i++) {
-				BuildRequirement<?> requirement = cyclicUnits
-						.get(i);
+				BuildRequirement<?> requirement = null;
+				for (BuildRequirement<?> req : cyclicUnits) {
+					if (req.unit.getPersistentPath().equals(
+							getDepPathWithNumber(i))) {
+						requirement = req;
+					}
+				}
 				assertTrue(requirement.unit != null);
 				assertEquals("Wrong persistence path for unit",
-						getDepPathWithNumber(i), requirement.unit.getPersistentPath());
+						getDepPathWithNumber(i),
+						requirement.unit.getPersistentPath());
 				assertEquals("Wrong factory for unit", testFactory,
 						requirement.req.factory);
 				assertEquals("Wrong input for unit", getPathWithNumber(i),

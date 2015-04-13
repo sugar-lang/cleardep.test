@@ -3,7 +3,7 @@ package org.sugarj.test.cleardep.build;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.sugarj.test.cleardep.CompilationUnitTestUtils.set;
-import static org.sugarj.test.cleardep.build.SimpleBuildUtilities.inputToFileList;
+import static org.sugarj.test.cleardep.build.once.SimpleBuildUtilities.inputToFileList;
 
 import java.util.List;
 
