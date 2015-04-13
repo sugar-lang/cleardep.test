@@ -21,15 +21,22 @@ public abstract class SimpleBuildTest extends ScopedBuildTest{
 	}
 
 	protected TrackingBuildManager buildMainFile() throws IOException {
-		TrackingBuildManager manager = new TrackingBuildManager();
-		buildMainFile(manager);
-		return manager;
+		return buildMainFile(new TrackingBuildManager());
 	}
 
-	protected void buildMainFile(TrackingBuildManager manager) throws IOException {
-		System.out.println("====== Build Project .... ======");
+	protected TrackingBuildManager buildMainFile(TrackingBuildManager manager) throws IOException {
+		return buildFile(getRelativeFile("main.txt"), manager);
+	}
+	
+	protected final TrackingBuildManager buildFile(RelativePath path) throws IOException {
+		return buildFile(path, new TrackingBuildManager());
+	}
+	
+	protected final TrackingBuildManager buildFile(RelativePath path, TrackingBuildManager manager) throws IOException {
+		System.out.println("====== Build " + path.getRelativePath()+" ======");
 		BuildRequest<?,?,?,?> req = requirementForInput(new TestBuilderInput(testBasePath, getRelativeFile("main.txt")));
 		manager.require(null, req);
+		return manager;
 	}
 	
 	protected abstract BuildRequest<?,?,?,?> requirementForInput(TestBuilderInput input);

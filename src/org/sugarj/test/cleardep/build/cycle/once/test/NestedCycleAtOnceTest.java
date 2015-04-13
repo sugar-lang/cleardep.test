@@ -19,10 +19,19 @@ import org.sugarj.test.cleardep.build.once.SimpleCyclicAtOnceBuilder;
 import org.sugarj.test.cleardep.build.once.SimpleBuilder.TestBuilderInput;
 import org.sugarj.test.cleardep.build.TrackingBuildManager;
 
+import static org.sugarj.test.cleardep.build.once.SimpleBuildUtilities.*;
+import static org.sugarj.test.cleardep.build.Validators.*;
+
 public class NestedCycleAtOnceTest extends SimpleBuildTest{
 
 	@DefaultNamedScopedPath
 	private RelativePath main;
+	
+	@DefaultNamedScopedPath
+	private RelativePath cyclePart;
+	
+	@DefaultNamedScopedPath
+	private RelativePath cycleEntry;
 	
 	@DefaultNamedScopedPath
 	private RelativePath subcycleEntry;
@@ -41,16 +50,23 @@ public class NestedCycleAtOnceTest extends SimpleBuildTest{
 	
 	@Test(timeout=2000)
 	public void testCleanRebuild() throws IOException {
-		TrackingBuildManager manager = new TrackingBuildManager();
-		BuildUnit<?> result = manager.require(null, requirementForInput(new TestBuilderInput(testBasePath, main)));
+		TrackingBuildManager manager = buildMainFile();
 		
+		validateThat(executedFilesOf(manager).containsSameElements(main, cycleEntry, cyclePart, subcycleEntry, subcyclePart1));
 	}
 	
 	@Test(timeout=2000)
 	public void testRebuildWithChangedCycleStructure() throws IOException {
 		testCleanRebuild();
 		
-		SimpleBuildUtilities.removeInputFileDep(subcycleEntry, subcyclePart1);
+		removeInputFileDep(subcycleEntry, subcyclePart1);
+		addInputFileDep(subcycleEntry, subcyclePart2);
+		
+		TrackingBuildManager manager = buildMainFile();
+		
+		validateThat(executedFilesOf(manager).containsSameElements(cycleEntry, cyclePart, subcycleEntry, subcyclePart2));
+	
+		
 	}
 
 }

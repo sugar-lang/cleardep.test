@@ -1,11 +1,15 @@
 package org.sugarj.test.cleardep.build.once;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.sugarj.cleardep.BuildUnit;
+import org.sugarj.cleardep.build.BuildRequest;
+import org.sugarj.cleardep.build.Builder;
 import org.sugarj.cleardep.build.BuilderFactory;
 import org.sugarj.cleardep.build.CompileCycleAtOnceBuilder;
 import org.sugarj.cleardep.output.None;
@@ -41,7 +45,7 @@ public class SimpleCyclicAtOnceBuilder extends
 	protected Path singletonPersistencePath(TestBuilderInput input) {
 		return FileCommands.addExtension(input.getInputPath(), "dep");
 	}
-
+	
 	@Override
 	protected List<None> buildAll() throws Throwable {
 
@@ -49,7 +53,7 @@ public class SimpleCyclicAtOnceBuilder extends
 
 		Set<RelativePath> cyclicDependencies = new HashSet<>();
 		for (TestBuilderInput input : this.input) {
-			//System.out.println(input.getInputPath().getRelativePath());
+			// System.out.println(input.getInputPath().getRelativePath());
 			cyclicDependencies.add(input.getInputPath());
 			require(input.getInputPath());
 		}

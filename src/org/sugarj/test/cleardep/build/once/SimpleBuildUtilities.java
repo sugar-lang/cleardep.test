@@ -53,8 +53,10 @@ public class SimpleBuildUtilities {
 				fileList.add(((TestBuilderInput) s).getInputPath());
 			} else if (s instanceof FileInput){
 				fileList.add(((FileInput) s).getFile());
+			} else if (s instanceof ArrayList) {
+				fileList.addAll(inputToFileList((ArrayList<Serializable>) s));
 			} else {
-				fail("Illegal input");
+				fail("Illegal input " + s.getClass());
 			}
 		}
 		return fileList;
